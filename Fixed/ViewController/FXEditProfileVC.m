@@ -45,6 +45,10 @@
     IBOutlet UIButton * religionButton10;
 
     NSArray *religions;
+    
+    int selected_religion;
+    
+    BOOL isChangePhotos;
 }
 
 @end
@@ -64,6 +68,9 @@
 
 -(void)initEditView
 {
+    
+    isChangePhotos = NO;
+    
     [editScrollView setContentSize:editView.frame.size];
     [editScrollView setContentOffset:CGPointZero];
 
@@ -85,15 +92,28 @@
     heightSlider.minimumValue = 45;
     heightSlider.maximumValue = 71;
     
-    heightSlider.value = 58;
-    heightLabel.text = @"5'8\"";
     
     for (UIButton * button in religions) {
         button.layer.cornerRadius = button.frame.size.height /2;
         
     }
     
-    [self onReligion:religionButton1];
+    // Set Value
+    
+    NSString * tempImagePath ;
+    UIImageView * tempImageview;
+    for (int i = 0 ; i < [self.user.photo_paths count] ; i++) {
+        tempImagePath = [self.user.photo_paths objectAtIndex:i];
+        tempImageview = [imageViews objectAtIndex:i];
+        [tempImageview setImageURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", APP_RESOURCE_PATH, tempImagePath]]];
+    }
+    
+    taglineTextField.text = self.user.tageline;
+    heightSlider.value = self.user.height;
+    [self onChangeHeight:nil];
+    
+    selected_religion = self.user.religion;
+    [self onReligion:[religions objectAtIndex:selected_religion]];
     
 }
 
@@ -105,6 +125,40 @@
 
 -(IBAction)onSave:(id)sender
 {
+    MBProgressHUD * mhud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    mhud.labelText = @"Saving...";
+    NSMutableArray * photos_paths = self.user.photo_paths;
+    if (isChangePhotos) {
+        NSMutableArray * tempArray = [[NSMutableArray alloc] init];
+        for (UIImageView * tempView in imageViews) {
+            if (tempView.image != nil && tempView.image.size.width != 0 && tempView.image.size.height != 0) {
+                [tempArray addObject:tempView.image];
+            }
+        }
+        
+        if ([tempArray count] != 0 ) {
+           photos_paths = [self.user uploadImage:tempArray withFlag:NO] ;
+        }
+    }
+    
+    SBJsonWriter * writer = [SBJsonWriter new];
+    NSString * photoPathStr =  [writer stringWithObject:photos_paths];
+
+    
+    NSString * postStr = [NSString stringWithFormat:@"tagline=%@&height=%i&religion=%i&photo_path=%@",taglineTextField.text, (int)heightSlider.value, selected_religion, photoPathStr];
+    
+    if (![self.user saveUserProfile:postStr withView:nil]) {
+        
+       [[[UIAlertView alloc] initWithTitle:@"" message:@"Can not save data .Connection Failed!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil] show];
+    }else{
+        self.user.tageline = taglineTextField.text;
+        self.user.height = (int)heightSlider.value;
+        self.user.religion = selected_religion;
+        self.user.photo_paths = photos_paths;
+    }
+    
+    [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+    
     [self onCancel:nil];
 }
 
@@ -169,6 +223,7 @@
         UIImageView * tempView = (UIImageView *) [imageViews objectAtIndex:activeProfileImageIndex];
         [tempView setImage:resultImage];
         
+        isChangePhotos = YES;
      }
     
     [picker dismissViewControllerAnimated:YES completion:nil];
@@ -219,6 +274,7 @@
     for (UIButton * button in religions) {
         if (button == tempButton) {
             button.backgroundColor = FIXED_LIGHT_GRAY_COLOR;
+            selected_religion = (int)[religions indexOfObject:button];
         }else{
             button.backgroundColor = [UIColor whiteColor];
         }

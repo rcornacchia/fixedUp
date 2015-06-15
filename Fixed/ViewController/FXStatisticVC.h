@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface FXStatisticVC : UIViewController
-
+-(void)loadingData;
 @end

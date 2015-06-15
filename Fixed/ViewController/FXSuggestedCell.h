@@ -11,8 +11,9 @@
 @protocol FXSuggestedCellDelegate <NSObject>
 
 -(void)rejectFriend:(NSInteger)index;
--(void)likeFriend:(NSInteger)index;
+-(void)likeFriend:(NSInteger)index withAcceptFlag:(BOOL)flag;
 -(void)viewSuggestedFriend:(NSInteger)index;
+
 @end
 
 
@@ -22,8 +23,12 @@
  @property (nonatomic, strong) IBOutlet UIButton * leftRejectButton;
  @property (nonatomic, strong)IBOutlet UIButton * centerRejectButton;
  @property (nonatomic, strong) IBOutlet UIButton * likeButton;
-    
+
+@property(nonatomic, strong) FXMatch * suggestedMatch;
 @property (nonatomic, assign) NSInteger cell_index;
+
 @property (nonatomic, strong) id<FXSuggestedCellDelegate> delegate;
+
+-(void)renderCell:(FXMatch *)match;
 
 @end

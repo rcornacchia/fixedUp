@@ -77,9 +77,34 @@
 
 -(IBAction)onRedeem:(id)sender
 {
+    UIButton * button = (UIButton *)sender;
     
+    NSInteger coinCount = 0;
+    if (button == redeemButton1) {
+        coinCount = 1;
+    }else if(button == redeemButton2)
+    {
+        coinCount =5;
+    }else if(button == redeemButton3){
+        coinCount = 10;
+    }
+    
+    [self redeemCoins:coinCount];
 }
 
+-(void)redeemCoins:(NSInteger )coinCount
+{
+    NSString * keyStr = [NSString stringWithFormat:@"%@_withdrawcoin", [FXUser sharedUser].fb_id];
+    [[NSUserDefaults standardUserDefaults] setInteger:coinCount  forKey:keyStr];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    BOOL result =   [[FXUser sharedUser] withdrawCoin:self.view];
+    
+    if (result) {
+        [[[UIAlertView alloc] initWithTitle:@"" message:[NSString stringWithFormat:@"You redeemed %i coins", coinCount] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil] show];
+        
+    }
+}
 
 -(IBAction)onRedeemForCoin:(id)sender
 {

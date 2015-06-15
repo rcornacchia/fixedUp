@@ -16,6 +16,9 @@
     
     IBOutlet UITableView * matchTableView;
     
+    NSArray * suggestionList;
+    NSArray * fixedList;
+    
     BOOL isFixed;
 
 }
@@ -51,8 +54,17 @@
     fixedButton.backgroundColor = [UIColor clearColor];
     
     [self onSuggested:nil];
+    
+   // [self loadingData];
 }
 
+
+-(void)loadingData{
+    suggestionList = [[FXUser sharedUser] getSuggestedMatchedByMe:self.view];
+    fixedList = [[FXUser sharedUser] getFixedMatchedByMe:self.view];
+
+   [matchTableView reloadData];
+}
 
 -(IBAction)onMenu:(id)sender
 {
@@ -68,11 +80,16 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell * cell;
+    FXMatch * match ;
     if (isFixed) {
         cell = [tableView dequeueReusableCellWithIdentifier:@"fixedCell"];
+        match = [fixedList objectAtIndex:indexPath.row];
     }else{
        cell = [tableView dequeueReusableCellWithIdentifier:@"suggestedCell"];
+        match = [suggestionList objectAtIndex:indexPath.row];
     }
+    
+
     
     UIImageView * userImageView1 = (UIImageView * )[cell viewWithTag:123];
     UIImageView * userImageView2 = (UIImageView * )[cell viewWithTag:124];
@@ -82,11 +99,21 @@
     UILabel * nameLabel1 = (UILabel * )[cell viewWithTag:125];
     UILabel * nameLabel2 = (UILabel * )[cell viewWithTag:126];
     
+    [userImageView1 setImageURL:[FXUser photoPathFromId:match.user1_id]];
+    [userImageView2 setImageURL:[FXUser photoPathFromId:match.user2_id]];
     
-    
+    nameLabel1.text = match.user1_name;
+    nameLabel2.text = match.user2_name;
     
     if (!isFixed) {
              UILabel * expireLabel = ( UILabel *)[cell viewWithTag:127];
+        NSString * expireStr = @"";
+        if (match.expire_day == 1) {
+            expireStr = [NSString stringWithFormat:@"EXPIRES IN\n %i DAY", match.expire_day];
+        }else{
+            expireStr = [NSString stringWithFormat:@"EXPIRES IN\n %i DAYS", match.expire_day];
+        }
+        expireLabel.text = expireStr;
     }
     
    
@@ -98,10 +125,18 @@
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (isFixed) {
-        return 2;
+        if (fixedList == nil) {
+            return 0;
+        }
+        
+        return [fixedList count];
     }
     
-    return 8;
+    if(suggestionList == nil){
+        return 0;
+    }
+
+    return [suggestionList count];
 }
 
 
@@ -128,15 +163,5 @@
     }
 }
 
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

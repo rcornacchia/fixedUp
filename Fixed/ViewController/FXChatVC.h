@@ -8,6 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
+
 @interface FXChatVC : UIViewController
 
+@property (nonatomic, strong) QBChatDialog *dialog;
+
+@property(nonatomic, strong) FXMatch * match;
 @end

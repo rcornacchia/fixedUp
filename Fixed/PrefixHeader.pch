@@ -12,17 +12,33 @@
 #import <Foundation/Foundation.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <SystemConfiguration/SystemConfiguration.h>
+#import <CoreLocation/CoreLocation.h>
 #import <LTSupport2/LTSupport2.h>
 #import <LTSupport2/AsyncImageView.h>
+#import "UIKit+AFNetworking.h"
 
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
 
+#import <Quickblox/Quickblox.h>
+
+#import "SVProgressHUD.h"
+#import "TWMessageBarManager.h"
+#import "NSDate+DateTools.h"
+
+#import "SoundService.h"
+#import "ChatService.h"
+
+
 #import "Constants.h"
-#import "ServerManager.h"
+#import "ServiceApiHelper.h"
 #import "JDSideMenu.h"
 #import "AppDelegate.h"
 
+#import "FXUser.h"
+#import "FXFriend.h"
+#import "FXMatch.h"
+#import "FXProfile.h"
 
 #endif
 // Include any system framework and library headers here that should be included in all compilation units.

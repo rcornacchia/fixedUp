@@ -15,9 +15,13 @@
 
 #import "UIViewController+JDSideMenu.h"
 #import <MessageUI/MFMailComposeViewController.h>
+#import "BlurImageGenerator.h"
+
 
 @interface FXMenuVC ()<MFMailComposeViewControllerDelegate, UINavigationControllerDelegate>
 {
+    
+    IBOutlet UIImageView *menuBackgroundView;
     IBOutlet UIView * menuContainerView;
 
     NSInteger selectedIndex;
@@ -38,6 +42,19 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    UINavigationController * navController = (UINavigationController *)[self sideMenuController].contentController;
+    UIImage *background = [BlurImageGenerator blurredSnapshot:navController.view];
+    
+    [menuBackgroundView setImage:background];
+    
+}
+
 
 -(IBAction)onFixFriend:(id)sender
 {

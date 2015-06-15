@@ -8,8 +8,7 @@
 
 #import "FXMatchPreferenceVC.h"
 #import "UIViewController+JDSideMenu.h"
-#import "NMRangeSlider.h"
-
+#import "MARKRangeSlider.h"
 
 @interface FXMatchPreferenceVC ()<UITextFieldDelegate>
 {
@@ -38,24 +37,32 @@
     IBOutlet  UISlider * distanceSlider;
     IBOutlet UILabel * distanceLabel;
     
-    IBOutlet NMRangeSlider * ageSlider;
+    IBOutlet MARKRangeSlider * ageSlider;
     IBOutlet UILabel * ageUpperLabel;
     IBOutlet UILabel * ageLowerLabel;
     
-    IBOutlet NMRangeSlider * heightSlider;
+    IBOutlet MARKRangeSlider * heightSlider;
     IBOutlet UILabel * heightUpperLabel;
     IBOutlet UILabel * heightLowerLabel;
     
     // Value
     
     BOOL editFlag;
+    
     BOOL sexFlag;
     BOOL interestFlag;
     BOOL singleFlag;
     int  religionFlag;
     
+    NSString *zipCode;
+    int distanceRange;
+    int leftAge;
+    int rightAge;
+    int leftHeight;
+    int rightHeight;
     
 }
+
 @end
 
 @implementation FXMatchPreferenceVC
@@ -86,29 +93,47 @@
     religion_kind_button.layer.cornerRadius = 10;
     religion_very_button.layer.cornerRadius = 10;
     
-    editFlag = YES;
-    sexFlag = NO;
-    interestFlag = NO;
-    singleFlag = NO;
-    religionFlag = 2;
-    
-    [self onSexMan:nil];
-    [self onInterestMen:nil];
-    [self onSingleYes:nil];
-    [self onReligionNot:nil];
- 
-    [self onEdit:nil];
     
     [helpView setHidden:YES];
-
+    
     helpView.layer.cornerRadius = 3;
     helpView.layer.borderColor = FIXED_LIGHT_GRAY_COLOR.CGColor;
     helpView.layer.borderWidth = 1.5;
     
     zipCodeTextField.delegate = self;
     
+    editFlag = YES;
+    
+    [self onEdit:nil];
+    
+     FXUser * user = [FXUser sharedUser];
+    
+    
+    sexFlag = !user.is_man;
+    interestFlag = !user.is_interested_man;
+    singleFlag = !user.is_single;
+    religionFlag = user.religion_priority;
+    
+    zipCode = user.zipcode;
+    distanceRange = user.distance_range;
+    
+    leftAge = user.min_age <18  ?24 :user.min_age;
+    rightAge = user.max_age <18 ? 31:user.max_age;
+    leftHeight = user.min_height  <45 ?51:user.min_height ;
+    rightHeight = user.max_height <45 ? 65:user.max_height;
+    
+    
+    [self onSexMan:nil];
+    [self onInterestMen:nil];
+    [self onSingleYes:nil];
+    [self onReligionNot:nil];
+  
+    zipCodeTextField.text = zipCode;
+    distanceSlider.value =  distanceRange;
+    
     [self configureAgeSlider];
     [self configureHeightSlider];
+    
 }
 
 
@@ -132,6 +157,25 @@
         [editButton setTitle:@"Edit" forState:UIControlStateNormal];
         [zipCodeTextField resignFirstResponder];
         [doneView setHidden:NO];
+        
+        NSString  * postStr  = [NSString stringWithFormat:@"is_man=%i&is_interested_man=%i&is_single=%i&religion_priority=%i&match_zipcode=%@&distance_range=%i&min_age=%i&max_age=%i&min_height=%i&max_height=%i",sexFlag, interestFlag, singleFlag, religionFlag, zipCodeTextField.text, (int)distanceSlider.value,leftAge,rightAge, leftHeight, rightHeight];
+        
+       if([[FXUser sharedUser] saveMatchReference:postStr withView:self.view])
+          {
+              FXUser * user = [FXUser sharedUser];
+              user.is_man = sexFlag;
+              user.is_interested_man = interestFlag;
+              user.is_single = singleFlag;
+              user.religion_priority = religionFlag;
+              user.match_zipcode = zipCodeTextField.text;
+              user.distance_range = (int)distanceSlider.value;
+              user.min_age = leftAge;
+              user.max_age = rightAge;
+              user.min_height = leftHeight;
+              user.max_height = rightHeight;
+          }else{
+              [[[UIAlertView alloc] initWithTitle:@"" message:@"Failed!" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil] show ];
+          }
     }
 
 }
@@ -253,78 +297,80 @@
 
 - (void) configureAgeSlider
 {
-    ageSlider.minimumValue = 18;
-    ageSlider.maximumValue = 55;
+    [ageSlider addTarget:self
+                         action:@selector(updateAgeSliderLabels)
+               forControlEvents:UIControlEventValueChanged];
     
-    ageSlider.lowerValue = 24;
-    ageSlider.upperValue = 31;
+    ageSlider.minimumValue = 0;
+    ageSlider.maximumValue = 37;
     
-    ageSlider.minimumRange = 5;
+    ageSlider.leftValue = leftAge - 18;
+    ageSlider.rightValue = rightAge - 18;
+    
+    ageSlider.minimumDistance = 2;
+    [ageSlider layoutSubviews];
+    [self updateAgeSliderLabels];
 }
 
 - (void) updateAgeSliderLabels
 {
     // You get get the center point of the slider handles and use this to arrange other subviews
     
-    CGPoint lowerCenter;
-    lowerCenter.x = (ageSlider.lowerCenter.x + ageSlider.frame.origin.x);
-    lowerCenter.y = (ageSlider.center.y + 30.0f);
+    CGPoint lowerCenter = ageLowerLabel.center;
+    lowerCenter.x = (ageSlider.leftThumbImageView.center.x + ageSlider.frame.origin.x);
     ageLowerLabel.center = lowerCenter;
-    ageLowerLabel.text = [NSString stringWithFormat:@"%d", (int)ageSlider.lowerValue];
+    ageLowerLabel.text = [NSString stringWithFormat:@"%d", 18 + (int)ageSlider.leftValue];
+    leftAge = 18 + (int)ageSlider.leftValue;
     
-    CGPoint upperCenter;
-    upperCenter.x = (ageSlider.upperCenter.x +ageSlider.frame.origin.x);
-    upperCenter.y = (ageSlider.center.y + 30.0f);
+    CGPoint upperCenter = ageUpperLabel.center;
+    upperCenter.x = (ageSlider.rightThumbImageView.center.x +ageSlider.frame.origin.x);
+
     ageUpperLabel.center = upperCenter;
-    ageUpperLabel.text = [NSString stringWithFormat:@"%d", (int)ageSlider.upperValue];
+    ageUpperLabel.text = [NSString stringWithFormat:@"%d", 18 + (int)ageSlider.rightValue];
+    
+    rightAge = 18 + (int)ageSlider.rightValue;
 }
-
-
-- (IBAction)ageSliderChanged:(NMRangeSlider*)sender
-{
-  //  [self updateAgeSliderLabels];
-}
-
 
 
 - (void) configureHeightSlider
 {
-    heightSlider.minimumValue = 45;
-    heightSlider.maximumValue = 71;
     
-    heightSlider.lowerValue = 51;
-    heightSlider.upperValue = 61;
+    [heightSlider addTarget:self
+                  action:@selector(updateHeightSliderLabels)
+        forControlEvents:UIControlEventValueChanged];
     
-    heightSlider.minimumRange = 2;
+    heightSlider.minimumValue = 0;
+    heightSlider.maximumValue = 26;
+    
+    heightSlider.leftValue = leftHeight - 45;
+    heightSlider.rightValue = rightHeight - 45;
+    
+    heightSlider.minimumDistance = 1;
+    
+    [heightSlider layoutSubviews];
+    [self updateHeightSliderLabels];
 }
 
 - (void) updateHeightSliderLabels
 {
     // You get get the center point of the slider handles and use this to arrange other subviews
     
-    CGPoint lowerCenter;
-    lowerCenter.x = (heightSlider.lowerCenter.x + heightSlider.frame.origin.x);
-    lowerCenter.y = (heightSlider.center.y +30.0f);
-    ageLowerLabel.center = lowerCenter;
-    int lowValue = (int)heightSlider.lowerValue;
-    ageLowerLabel.text = [NSString stringWithFormat:@"%i'%i\"", lowValue/10, lowValue%10];
+    CGPoint lowerCenter = heightLowerLabel.center;
+    lowerCenter.x = (heightSlider.leftThumbImageView.center.x + heightSlider.frame.origin.x);
     
-    CGPoint upperCenter;
-    upperCenter.x = (heightSlider.upperCenter.x +heightSlider.frame.origin.x);
-    upperCenter.y = (heightSlider.center.y + 30.0f);
-   ageUpperLabel.center = upperCenter;
+    heightLowerLabel.center = lowerCenter;
+    int lowValue = 45 + (int)heightSlider.leftValue;
+    heightLowerLabel.text = [NSString stringWithFormat:@"%i'%i\"", lowValue/10, lowValue%10];
+    leftHeight = lowValue;
     
-    int upperValue = (int)heightSlider.upperValue;
-    ageUpperLabel.text = [NSString stringWithFormat:@"%i'%i\"", upperValue/10, upperValue%10];
+    CGPoint upperCenter = heightUpperLabel.center;
+    upperCenter.x = (heightSlider.rightThumbImageView.center.x +heightSlider.frame.origin.x);
+   heightUpperLabel.center = upperCenter;
     
+    int upperValue =  45 + (int)heightSlider.rightValue;
+    heightUpperLabel.text = [NSString stringWithFormat:@"%i'%i\"", upperValue/10, upperValue%10];
+    rightHeight = upperValue;
 }
-
-
-- (IBAction)heightSliderChanged:(NMRangeSlider*)sender
-{
-  //  [self updateHeightSliderLabels];
-}
-
 
 /*
 #pragma mark - Navigation

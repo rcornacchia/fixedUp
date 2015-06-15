@@ -32,15 +32,37 @@
     }
 }
 
--(void)setCellData:(FXUser *)user
+-(void)setCellData:(FXFriend *)user
 {
     userProfile = user;
+    
+    nameLabel.text = userProfile.name;
+    
+    NSURL  * tempPath =  [FXUser photoPathFromId:userProfile.fb_id];
+    
+    if ( tempPath != nil ) {
+        [userImageButton setBackgroundImageForState:UIControlStateNormal withURL:tempPath];
+    }
+ 
+    scoreLabel.text =  [NSString stringWithFormat:@"%i",(int)(userProfile.match_score * 100)];
+    categoryLabel.text = userProfile.interest;
+    friendCountLabel.text = [NSString stringWithFormat:@"%i", userProfile.match_tags];
+
 }
 
 -(IBAction)onShowProfile:(id)sender
 {
-    FXProfileVC * controller = [APP.activeContainer.storyboard instantiateViewControllerWithIdentifier:@"FXProfileVC"];
-    [APP.activeContainer pushViewController:controller animated:YES];
+  
+    FXProfile * profile = [FXProfile getProfile:userProfile.fb_id withView:nil];
+    if (profile != nil) {
+        FXProfileVC * controller = [APP.activeContainer.storyboard instantiateViewControllerWithIdentifier:@"FXProfileVC"];
+        controller.isMyProfile = NO;
+        controller.profile = profile;
+        [APP.activeContainer pushViewController:controller animated:YES];
+        
+    }
+
+    
 }
 
 @end

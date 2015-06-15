@@ -10,4 +10,6 @@
 
 @interface FXFixedVC : UIViewController
 
+@property(nonatomic, strong) NSArray * facebookFriendList;
+
 @end

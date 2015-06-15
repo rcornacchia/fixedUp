@@ -9,6 +9,8 @@
 #import "FXFriendVC.h"
 #import "FXFriendCell.h"
 #import "UIViewController+JDSideMenu.h"
+#import "FXProfileVC.h"
+
 
 @interface FXFriendVC ()<UITableViewDataSource, UITableViewDelegate, FXFriendCellDelegate, UITextFieldDelegate>
 {
@@ -18,6 +20,7 @@
     IBOutlet UITableView * friendTableView;
     
     IBOutlet UIView * fixView;
+    IBOutlet UIScrollView * fixScrollView;
     IBOutlet UIView * fixSubView;
     
     IBOutlet UIImageView * myPhotoImageView;
@@ -26,8 +29,9 @@
     IBOutlet UIButton *checkButton;
     IBOutlet UITextField * commentTextField;
     
-    NSMutableArray * friendList;
-   
+    FXFriend * centerPerson;
+    
+    NSInteger activeIndex;
 }
 
 @end
@@ -48,6 +52,9 @@
 
 -(void)initFriendView
 {
+    
+    centerPerson = [self.friendList objectAtIndex:0];
+    
     friendTableView.delegate = self;
     friendTableView.dataSource = self;
     
@@ -64,6 +71,20 @@
     friendImageView.layer.cornerRadius = friendImageView.frame.size.width/2;
     
     fixItButton.layer.cornerRadius = 5;
+    
+    commentTextField.delegate = self;
+    
+    // Set Facebook Friend
+    
+    NSURL  * tempPath =  [FXUser photoPathFromId:centerPerson.fb_id]  ;
+    
+    if ( tempPath != nil ) {
+       [myPhotoButton setBackgroundImageForState:UIControlStateNormal withURL:tempPath];
+
+    }
+    
+    nameLabel.text = centerPerson.name;
+    
 }
 
 -(IBAction)onMenu:(id)sender
@@ -85,12 +106,17 @@
     
     cell.delegate = self;
     cell.cell_index = indexPath.row;
+    [cell setCellData:[self.friendList objectAtIndex:indexPath.row + 1]];
+    
     return  cell;
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 5;
+    if (self.friendList == nil || [self.friendList count] < 2) {
+        return 0;
+    }
+    return [self.friendList count] -1;
 }
 
 
@@ -98,32 +124,86 @@
 
 -(void)fixFriend:(NSInteger)index
 {
+    activeIndex = index;
+    FXFriend * friendData = [self.friendList objectAtIndex:index + 1];
+    [friendImageView setImageWithURL:[FXUser photoPathFromId:friendData.fb_id]];
+    [myPhotoImageView setImage:myPhotoButton.currentBackgroundImage];
+    
+    commentTextField.text = @"";
+    [checkButton setSelected:NO];
     [fixView setHidden:NO];
 }
+
 
 /// FixView Action
 
 -(IBAction)onFixIt:(id)sender
 {
+    FXFriend * friend = [self.friendList objectAtIndex:activeIndex + 1];
     
+    NSString * postStr = [NSString stringWithFormat:@"user1=%@&user2=%@&comment=%@&anonymous=%i",centerPerson.fb_id, friend.fb_id, commentTextField.text, checkButton.isSelected];
+    if( [[FXUser sharedUser] fixIt:postStr withView:self.view]){
+        [FXUser sharedUser].activeFixes --;
+    }
+    
+    [self  onCloseFixView:nil];
+    
+}
+
+-(IBAction)onCheckAnonymous:(id)sender{
+    if (checkButton.isSelected) {
+        [checkButton setSelected:NO];
+    }else{
+        [checkButton setSelected:YES];
+    }
 }
 
 -(IBAction)onCloseFixView:(id)sender
 {
     [fixView setHidden:YES];
+    [self hideKeyboard];
 }
 
 -(IBAction)onShowUserProfile:(id)sender
-{
-    
+{   
+    FXProfile * profile = [FXProfile getProfile:centerPerson.fb_id withView:nil];
+    if (profile != nil) {
+        FXProfileVC * controller = [APP.activeContainer.storyboard instantiateViewControllerWithIdentifier:@"FXProfileVC"];
+        controller.isMyProfile = NO;
+        controller.profile = profile;
+        [APP.activeContainer pushViewController:controller animated:YES];
+        
+    }
 }
 
+
+// TextField Delegate
+
+-(BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
+    
+    if (textField == commentTextField) {
+        [fixScrollView setContentOffset:CGPointMake(0, fixSubView.frame.origin.y - 50)];
+    }
+    
+    
+    return YES;
+}
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    [textField resignFirstResponder];
+    if (textField == commentTextField) {
+        [self hideKeyboard];
+    }
     return YES;
 }
+
+
+-(void)hideKeyboard{
+    [commentTextField resignFirstResponder];
+    [fixScrollView setContentOffset:CGPointMake(0, 0)];
+}
+
+
 /*
 #pragma mark - Navigation
 

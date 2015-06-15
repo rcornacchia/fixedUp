@@ -9,20 +9,11 @@
 #import <UIKit/UIKit.h>
 
 @interface FXUserView : UIView
-{
-    CGPoint startPoint;
-    
-    CGPoint beforePoint;
-    CGPoint currentPoint;
-
-}
+   
 @property (nonatomic, strong) IBOutlet UIImageView * userImageView;
-@property (nonatomic, assign) NSInteger userIndex;
-
--(void)updateUserImage:(UIImage *)image;
--(void)updateUserImageWithURL:(NSString *)imageUrl;
+@property (nonatomic, strong) FXFriend * userObject;
 
 -(IBAction)onDetailClick:(id)sender;
-
+-(void)renderUserView:(FXFriend *)userObj;
 
 @end

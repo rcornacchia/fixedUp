@@ -10,4 +10,6 @@
 
 @interface FXEditProfileVC : UIViewController
 
+@property (nonatomic, strong) FXUser * user;
+
 @end

@@ -11,5 +11,6 @@
 @interface FXProfileVC : UIViewController
 
 @property (nonatomic, assign) BOOL isMyProfile;
+@property (nonatomic, strong) FXProfile * profile;
 
 @end

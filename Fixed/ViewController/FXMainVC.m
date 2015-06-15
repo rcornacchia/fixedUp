@@ -27,8 +27,9 @@ typedef NS_ENUM(NSInteger, TabItemType) {
     IBOutlet UIView * bottomView;
     
     UINavigationController * fixedNavVC;
-    FXMainVC * matchVC;
+    FXMatchVC * matchVC;
     UINavigationController * statisticNavVC;
+    FXStatisticVC * statisticVC;
     
     IBOutlet UIView * fixedView;
     IBOutlet UIView * matchView;
@@ -67,6 +68,7 @@ typedef NS_ENUM(NSInteger, TabItemType) {
     statisticNavVC = [self.storyboard instantiateViewControllerWithIdentifier:@"FXStatisticNavigationController"];
     [self addChildViewController:statisticNavVC];
     [statisticView addSubview:statisticNavVC.view];
+    statisticVC = [statisticNavVC.viewControllers objectAtIndex:0];
 
 }
 
@@ -100,9 +102,12 @@ typedef NS_ENUM(NSInteger, TabItemType) {
             [fixedView setHidden:NO];
             break;
         case MATCH_ITEM:
+            [matchVC loadingData];
             [matchView setHidden:NO];
+            
             break;
        case STATISTIC_ITEM:
+            [statisticVC loadingData];
             [statisticView setHidden:NO];
             break;
             

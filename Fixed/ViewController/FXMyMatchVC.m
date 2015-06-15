@@ -11,6 +11,8 @@
 #import "FXProfileVC.h"
 #import "FXSuggestedCell.h"
 #import "FXMyMatchCell.h"
+#import "FXChatVC.h"
+
 
 @interface FXMyMatchVC ()<UITableViewDataSource, UITableViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, FXSuggestedCellDelegate, UITextFieldDelegate>
 {
@@ -37,6 +39,8 @@
     IBOutlet UIButton * suggestedFriendPhotoButton;
     IBOutlet UILabel * suggestedFriendNameLabel;
     
+    NSString * selectedUserId;
+    
     // Purchase Coin
     
     IBOutlet UIView * purchaseCoinView;
@@ -50,11 +54,13 @@
     
     IBOutlet UITextField * searchBar;
     
-    IBOutlet UILabel * suggesteFriendCountLabel;
+    IBOutlet UILabel * coinCountLabel;
+    
     IBOutlet UICollectionView  * suggestedFriendCollectionView;
     IBOutlet UITableView * friendTableView;
     
-    
+    NSMutableArray * suggestedMatches;
+    NSMutableArray * myMatches;
     
 }
 @end
@@ -74,14 +80,13 @@
 
 -(void)initMyMatchView
 {
-
-    suggesteFriendCountLabel.text = @"8";
     searchBar.delegate  = self;
     suggestedFriendCollectionView.delegate = self;
     suggestedFriendCollectionView.dataSource = self;
     
     friendTableView.delegate = self;
     friendTableView.dataSource = self;
+    friendTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     
     [acceptView setHidden:YES];
     acceptSubView.layer.borderColor = FIXED_DARK_GRAY_COLOR.CGColor;
@@ -120,8 +125,27 @@
     buyButtton2.layer.cornerRadius = 5;
     buyButtton3.layer.cornerRadius = 5;
     
+    [self refreshCoins];
+ 
+    [self loadData];
 }
 
+
+-(void)loadData{
+    NSDictionary * tempDic = [[FXUser sharedUser]  getMyMatches:self.view];
+    if (tempDic != nil) {
+        
+        suggestedMatches = [FXMatch  matchesFromArray:[tempDic objectForKey:@"suggested_matches"]];
+        myMatches = [FXMatch  matchesFromArray:[tempDic objectForKey:@"accepted_matches"]];
+     
+        [suggestedFriendCollectionView reloadData];
+        [friendTableView reloadData];
+    }
+}
+
+-(void)refreshCoins{
+     coinCountLabel.text = [NSString stringWithFormat:@"%i",[FXUser sharedUser].coins];
+}
 
 -(IBAction)onMenu:(id)sender
 {
@@ -159,11 +183,15 @@
 }
 
 -(IBAction)onViewProfile:(id)sender
-{
-    FXProfileVC * profileVc = (FXProfileVC *)[self.storyboard instantiateViewControllerWithIdentifier:@"FXProfileVC"];
-    profileVc.isMyProfile = NO;
-    
-    [self.navigationController pushViewController:profileVc animated:YES];
+{   
+    FXProfile * profile = [FXProfile getProfile:selectedUserId withView:nil];
+    if (profile != nil) {
+        FXProfileVC * controller = [APP.activeContainer.storyboard instantiateViewControllerWithIdentifier:@"FXProfileVC"];
+        controller.isMyProfile = NO;
+        controller.profile = profile;
+        [APP.activeContainer pushViewController:controller animated:YES];
+        
+    }
 }
 
 //Accept Action
@@ -207,15 +235,20 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     FXMyMatchCell * cell = (FXMyMatchCell *) [tableView dequeueReusableCellWithIdentifier:@"matchFriendCell"];
+    [cell renderCell:[myMatches objectAtIndex:indexPath.row]];
     
     return  cell;
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 8;
+    if (myMatches == nil ) {
+        return 0;
+    }
+    return [myMatches count];
     
 }
+
 
 // Collection View
 
@@ -225,15 +258,17 @@
     
     cell.delegate = self;
     cell.cell_index = indexPath.item;
+    [cell renderCell:[suggestedMatches objectAtIndex:indexPath.item]];
     
-    [cell.centerRejectButton setHidden:YES];
-
     return  cell;
 }
 
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return 8;
+    if (suggestedMatches == nil ) {
+        return 0;
+    }
+    return [suggestedMatches count];
 }
 
 -(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
@@ -246,16 +281,64 @@
 
 -(void)rejectFriend:(NSInteger)index
 {
-    
+    [suggestedMatches removeObjectAtIndex:index];
+    NSIndexPath * tempIndexPath = [NSIndexPath indexPathForItem:index inSection:0];
+    [suggestedFriendCollectionView deleteItemsAtIndexPaths:@[tempIndexPath]];
+  
+    [self refreshCoins];
 }
 
--(void)likeFriend:(NSInteger)index
+-(void)likeFriend:(NSInteger)index withAcceptFlag:(BOOL)flag
 {
-    [acceptView setHidden:NO];
+    if (flag) {
+        [acceptView setHidden:NO];
+        
+        FXMatch * tempMatch =  [suggestedMatches objectAtIndex:index];
+        tempMatch.is_accept = YES;
+        [suggestedMatches removeObjectAtIndex:index];
+        [myMatches addObject:tempMatch];
+
+        NSIndexPath * tempIndexPath = [NSIndexPath indexPathForItem:index inSection:0];
+        [suggestedFriendCollectionView deleteItemsAtIndexPaths:@[tempIndexPath]];
+        
+        tempIndexPath = [NSIndexPath indexPathForItem:[myMatches count] -1  inSection:0];
+        [friendTableView insertRowsAtIndexPaths:@[tempIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        
+    }else{
+        if ([FXUser sharedUser].coins == 0) {
+            [purchaseCoinView setHidden:NO];
+        }
+        
+        [self refreshCoins];
+    }
 }
+
 
 -(void)viewSuggestedFriend:(NSInteger)index
 {
+    FXMatch * match = [suggestedMatches objectAtIndex:index];
+    
+    if ([match.user1_id isEqualToString:[FXUser sharedUser].fb_id]) {
+        [selectedUserPhotoButton setImageForState:UIControlStateNormal withURL:[FXUser photoPathFromId:match.user2_id]];
+        [nameLabel setText:match.user2_name];
+        
+        selectedUserId = match.user2_id;
+        
+    }else{
+        [selectedUserPhotoButton setImageForState:UIControlStateNormal withURL:[FXUser photoPathFromId:match.user1_id]];
+        [nameLabel setText:match.user1_name];
+        selectedUserId = match.user1_id;
+
+    }
+    
+    if (match.anonymous) {
+        [suggestedFriendPhotoButton setImage:[UIImage imageNamed:@"anonymous.png"] forState:UIControlStateNormal];
+    }else{
+        [suggestedFriendPhotoButton setImageForState:UIControlStateNormal withURL:[FXUser photoPathFromId:match.provider_id]];
+    }
+    
+    suggestedFriendNameLabel.text = [NSString stringWithFormat:@"\"%@\"\n-%@",match.comment, match.provider_name];
+    
     [userPreView setHidden:NO];
 }
 
@@ -268,15 +351,49 @@
     return YES;
 }
 
+// Coin Purchase Processing
 
-/*
+-(IBAction)onBuy1:(id)sender{
+    [self addCoin:1];
+}
+
+-(IBAction)onBuy5:(id)sender{
+    [self addCoin:5];
+}
+
+-(IBAction)onBuy10:(id)sender{
+    [self addCoin:10];
+}
+
+-(void)addCoin:(NSInteger)coinCount{
+    
+    NSString * keyStr = [NSString stringWithFormat:@"%@_addedcoin", [FXUser sharedUser].fb_id];
+    [[NSUserDefaults standardUserDefaults] setInteger:coinCount  forKey:keyStr];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    BOOL result =   [[FXUser sharedUser] addCoin:self.view];
+    
+    if (result) {
+        [[[UIAlertView alloc] initWithTitle:@"" message:[NSString stringWithFormat:@"You purchased %i coins", coinCount] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil] show];
+        
+        coinCountLabel.text = [NSString stringWithFormat:@"%i", (int)[FXUser sharedUser].coins];
+    }
+    
+}
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
+    
+    if ([segue.identifier isEqualToString:@"gotoChatView"] || [segue.identifier isEqualToString:@"gotoChatView1"]) {
+        FXChatVC  * controller = segue.destinationViewController;
+        
+        controller.match =  [myMatches objectAtIndex:[friendTableView indexPathForSelectedRow].row];
+    }
 }
-*/
+
 
 @end

@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface FXMatchVC : UIViewController
-
+-(void)loadingData;
 @end

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6751" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="vXZ-lx-hvc">
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -1350,6 +1351,7 @@
                     </view>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
                     <connections>
+                        <outlet property="menuBackgroundView" destination="qga-cy-CS4" id="r8v-EQ-ewM"/>
                         <outlet property="menuContainerView" destination="yxm-Cx-9pI" id="EHz-0Z-JXU"/>
                     </connections>
                 </viewController>
@@ -3657,7 +3659,7 @@
         <image name="menu_green.png" width="13" height="12"/>
         <image name="nav_back_red.png" width="20" height="20"/>
         <image name="nav_back_white.png" width="27" height="27"/>
-        <image name="other_person_background.png" width="113" height="106"/>
+        <image name="other_person_background.png" width="113" height="113"/>
         <image name="paypal_bg.png" width="197" height="56"/>
         <image name="person1.png" width="186" height="192"/>
         <image name="person2.png" width="196" height="189"/>

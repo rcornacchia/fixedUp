@@ -21,6 +21,8 @@
     IBOutlet UILabel * totalRevenueLabel;
     
     IBOutlet UIButton * bankButton;
+    
+    NSDictionary * statisticsData;
 }
 @end
 
@@ -40,8 +42,46 @@
 -(void)initStatisticView
 {
     bankButton.layer.cornerRadius = 8;
-}
 
+    suggestMatchLabel.text = @"";
+    pendingMatchLabel.text = @"";
+    successMatchLabel.text = @"";
+    efficiencyLabel.text  = @"";
+    
+    matchRevenueLabel.text = @"";
+    referralRevenueLabel.text = @"";
+    totalRevenueLabel.text = @"";
+    
+   }
+
+-(void)loadingData{
+    
+    statisticsData = [[FXUser sharedUser] getStatisticsData:self.view];
+    
+    if (statisticsData != nil ) {
+        int   suggested_matches = [[statisticsData objectForKey:@"suggested_matches"] intValue];
+        int   successful_matches = [[statisticsData objectForKey:@"successful_matches"] intValue];
+        int   pending_matches = [[statisticsData objectForKey:@"pending_matches"] intValue];
+        
+        double  match_revenue = [[statisticsData objectForKey:@"match_revenue"] doubleValue];
+        double  referral_revenue = [[statisticsData objectForKey:@"referral_revenue"] doubleValue];
+        
+        if (suggested_matches != 0) {
+            suggestMatchLabel.text = [NSString stringWithFormat:@"%i", suggested_matches];
+            pendingMatchLabel.text = [NSString stringWithFormat:@"%i", pending_matches];
+            successMatchLabel.text = [NSString stringWithFormat:@"%i", successful_matches];
+            efficiencyLabel.text  = [NSString stringWithFormat:@"%.2f%%", (successful_matches/(float)suggested_matches) * 100];
+        }
+        
+        
+        matchRevenueLabel.text = [NSString stringWithFormat:@"$%.2f", match_revenue];
+        referralRevenueLabel.text = [NSString stringWithFormat:@"$%.2f", referral_revenue];
+        totalRevenueLabel.text = [NSString stringWithFormat:@"$%.2f", match_revenue + referral_revenue];
+        
+        
+    }
+
+}
 
 -(IBAction)onMenu:(id)sender
 {

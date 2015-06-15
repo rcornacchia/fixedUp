@@ -18,62 +18,35 @@
     // Drawing code
 }
 */
--(void)awakeFromNib
-{
-    UIPanGestureRecognizer  *panGesturer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panView:)];
-    [self addGestureRecognizer:panGesturer];
+
+- (void)awakeFromNib {
+    // Initialization code
+    self.userImageView.layer.cornerRadius = self.userImageView.frame.size.width/2;
 }
 
--(void)updateUserImage:(UIImage *)image
-{
-        [self.userImageView setImage:image];
-}
 
--(void)updateUserImageWithURL:(NSString *)imageUrl
+-(void)renderUserView:(FXFriend *)userObj
 {
-    NSURL * url = [NSURL URLWithString:imageUrl];
-    if (url) {
-        [self.userImageView setImageURL:url];
-    }else{
-        [self.userImageView setImage:nil];
+    self.userObject = userObj;
+    
+    NSURL  * tempPath =  [FXUser photoPathFromId:self.userObject.fb_id]  ;
+    
+    if ( tempPath != nil ) {
+        [self.userImageView setImageWithURL:tempPath];
     }
+    
 }
-
 
 -(IBAction)onDetailClick:(id)sender
 {
-    FXProfileVC * controller = [APP.activeContainer.storyboard instantiateViewControllerWithIdentifier:@"FXProfileVC"];
-    [APP.activeContainer pushViewController:controller animated:YES];
-}
+    FXProfile * profile = [FXProfile getProfile:self.userObject.fb_id withView:nil];
+    if (profile != nil) {
+        FXProfileVC * controller = [APP.activeContainer.storyboard instantiateViewControllerWithIdentifier:@"FXProfileVC"];
+        controller.isMyProfile = NO;
+        controller.profile = profile;
+        [APP.activeContainer pushViewController:controller animated:YES];
 
-
--(void)panView:(UIPanGestureRecognizer *)gesturer
-{
-    CGPoint point = [gesturer locationInView:self];
-    float  rotationRadian;
-    if(gesturer.state == UIGestureRecognizerStateBegan)
-    {
-        startPoint = point;
-        beforePoint = point;
-        return;
-    }else if(gesturer.state == UIGestureRecognizerStateEnded)
-    {
-       //  rotationRadian = [self pointPairToBearingRadian:point secondPoint:startPoint];
-    }else{
-       rotationRadian = [self pointPairToBearingRadian:beforePoint secondPoint:point];
-        
     }
-    
-    self.transform = CGAffineTransformMakeRotation(rotationRadian);
-}
-
-- (CGFloat) pointPairToBearingRadian:(CGPoint)startingPoint secondPoint:(CGPoint) endingPoint
-{
-    CGPoint originPoint = CGPointMake(endingPoint.x - startingPoint.x, endingPoint.y - startingPoint.y); // get origin point to origin by subtracting end from start
-    float bearingRadians = atan2f(originPoint.y, originPoint.x); // get bearing in radians
-//    float bearingDegrees = bearingRadians * (180.0 / M_PI); // convert to degrees
-//    bearingDegrees = (bearingDegrees > 0.0 ? bearingDegrees : (360.0 + bearingDegrees)); // correct discontinuity
-    return bearingRadians;
 }
 
 @end

@@ -10,12 +10,18 @@
 
 @interface FXMyMatchCell : UITableViewCell
 {
-    IBOutlet UIButton *userPhotoButton;
-    IBOutlet UILabel * nameLabel;
-    IBOutlet UILabel * commentLabel;
+   
+    
     
 }
 
+@property (nonatomic, strong) IBOutlet UIButton *userPhotoButton;
+@property (nonatomic, strong)IBOutlet UILabel * nameLabel;
+@property (nonatomic, strong) IBOutlet UILabel * commentLabel;
+
+@property (nonatomic, strong) NSString * user_id;
+
 @property (nonatomic, assign) NSInteger cell_index;
 
+-(void)renderCell:(FXMatch *)match;
 @end

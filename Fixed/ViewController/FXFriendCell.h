@@ -21,12 +21,12 @@
     IBOutlet UILabel * friendCountLabel;
     
     IBOutlet UIButton * fixButton;
-    FXUser * userProfile;
+    FXFriend * userProfile;
 }
 
 @property (nonatomic, assign) NSInteger cell_index;
 @property (nonatomic, strong) id<FXFriendCellDelegate> delegate;
 
 -(IBAction)onFix:(id)sender;
--(void)setCellData:(FXUser *)user;
+-(void)setCellData:(FXFriend *)user;
 @end

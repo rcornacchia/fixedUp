@@ -10,4 +10,5 @@
 
 @interface FXFriendVC : UIViewController
 
+@property (nonatomic, strong) NSMutableArray * friendList;
 @end

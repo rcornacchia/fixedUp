@@ -13,7 +13,7 @@
 
 - (void)awakeFromNib {
     // Initialization code
-    userPhotoButton.layer.cornerRadius = userPhotoButton.frame.size.width/2;
+    self.userPhotoButton.layer.cornerRadius = self.userPhotoButton.frame.size.width/2;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
@@ -22,10 +22,33 @@
     // Configure the view for the selected state
 }
 
--(IBAction)onDetail:(id)sender
+-(void)renderCell:(FXMatch *)match
 {
-    FXProfileVC * controller = [APP.activeContainer.storyboard instantiateViewControllerWithIdentifier:@"FXProfileVC"];
-    [APP.activeContainer pushViewController:controller animated:YES];
+    if ([match.user1_id isEqualToString:[FXUser sharedUser].fb_id]) {
+        [self.userPhotoButton setBackgroundImageForState:UIControlStateNormal withURL:[FXUser photoPathFromId:match.user2_id]];
+        self.nameLabel.text = match.user2_name;
+        self.user_id = match.user2_id;
+    }else{
+        [self.userPhotoButton setBackgroundImageForState:UIControlStateNormal withURL:[FXUser photoPathFromId:match.user1_id]];
+        self.nameLabel.text = match.user1_name;
+        self.user_id =  match.user1_id;
+    }
+    
+    self.commentLabel.text = match.comment;
 }
+
+-(IBAction)onDetail:(id)sender
+{    
+    FXProfile * profile = [FXProfile getProfile:self.user_id withView:nil];
+    if (profile != nil) {
+        FXProfileVC * controller = [APP.activeContainer.storyboard instantiateViewControllerWithIdentifier:@"FXProfileVC"];
+        controller.isMyProfile = NO;
+        controller.profile = profile;
+        [APP.activeContainer pushViewController:controller animated:YES];
+        
+    }
+
+}
+
 
 @end

@@ -16,5 +16,7 @@
 @property(strong, nonatomic) FBSDKLoginManager  *loginManager;
 @property (nonatomic, strong) UINavigationController * activeContainer;
 
+@property(nonatomic, strong) NSString * deviceToken;
+@property (strong, nonatomic) CLLocation *currentLocation;
 @end
 
