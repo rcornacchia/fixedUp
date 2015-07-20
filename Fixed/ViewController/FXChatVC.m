@@ -29,7 +29,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.messagesTableView.delegate =self;
+    self.messagesTableView.dataSource = self;
+    
     self.messagesTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    
+    [ChatMessageTableViewCell initialize];
     
     // Do any additional setup after loading the view.
 }
@@ -83,7 +88,7 @@
         userId = self.match.user1_id;
     }
     
-    [userImageView setImageURL:[FXUser photoPathFromId:userId]];
+    [userImageView setImageWithURL:[FXUser photoPathFromId:userId]];
     
 }
 

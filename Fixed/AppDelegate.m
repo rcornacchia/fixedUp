@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 
+
 @interface AppDelegate ()<CLLocationManagerDelegate>
 {
     CLLocationManager * locationManager;
@@ -30,11 +31,15 @@
     
     // QuickBlox
     
-    [QBApplication sharedApplication].applicationId = 24107;
-    [QBConnection registerServiceKey:@"YDqNJff3PKb5hcj"];
-    [QBConnection registerServiceSecret:@"pmk2huPjW6txgze"];
-    [QBSettings setAccountKey:@"xRWNqahdGPHbnbvMU2pg"];
+    [QBApplication sharedApplication].applicationId = QBAppId;
+    [QBConnection registerServiceKey:QBServiceKey];
+    [QBConnection registerServiceSecret:QBServiceSecret];
+    [QBSettings setAccountKey:QBAccountKey];
 
+    // In-App purchase
+    
+    [MKStoreManager sharedManager];
+    
     //
     // Setting PushNotification\
     

@@ -47,7 +47,7 @@
     
     // Value
     
-    BOOL editFlag;
+ //   BOOL editFlag;
     
     BOOL sexFlag;
     BOOL interestFlag;
@@ -60,6 +60,8 @@
     int rightAge;
     int leftHeight;
     int rightHeight;
+    
+    float distanceSliderScale;
     
 }
 
@@ -102,16 +104,14 @@
     
     zipCodeTextField.delegate = self;
     
-    editFlag = YES;
-    
-    [self onEdit:nil];
+//    editFlag = YES;
     
      FXUser * user = [FXUser sharedUser];
     
     
-    sexFlag = !user.is_man;
-    interestFlag = !user.is_interested_man;
-    singleFlag = !user.is_single;
+    sexFlag = user.is_man;
+    interestFlag = user.is_interested_man;
+    singleFlag = user.is_single;
     religionFlag = user.religion_priority;
     
     zipCode = user.zipcode;
@@ -119,17 +119,24 @@
     
     leftAge = user.min_age <18  ?24 :user.min_age;
     rightAge = user.max_age <18 ? 31:user.max_age;
-    leftHeight = user.min_height  <45 ?51:user.min_height ;
-    rightHeight = user.max_height <45 ? 65:user.max_height;
+    leftHeight = user.min_height  <450 ?510:user.min_height ;
+    rightHeight = user.max_height <450 ? 650:user.max_height;
     
+    [self configSex];
+    [self configInterest];
+    [self configSingle];
+    [self configReligion];
     
-    [self onSexMan:nil];
-    [self onInterestMen:nil];
-    [self onSingleYes:nil];
-    [self onReligionNot:nil];
-  
     zipCodeTextField.text = zipCode;
+    
+    distanceSlider.minimumValue = 0;
+    distanceSlider.maximumValue = 500;
+    
+    distanceSliderScale = (distanceSlider.frame.size.width) /500;
+    
     distanceSlider.value =  distanceRange;
+    
+    [self updateDistanceLabel];
     
     [self configureAgeSlider];
     [self configureHeightSlider];
@@ -149,14 +156,14 @@
 
 -(IBAction)onEdit:(id)sender
 {
-    editFlag = !editFlag;
-    if (editFlag) {
-        [editButton setTitle:@"Done" forState:UIControlStateNormal];
-            [doneView setHidden:YES];
-    }else{
-        [editButton setTitle:@"Edit" forState:UIControlStateNormal];
+  //  editFlag = !editFlag;
+ //   if (editFlag) {
+  //      [editButton setTitle:@"Done" forState:UIControlStateNormal];
+ //           [doneView setHidden:YES];
+//    }else{
+ //       [editButton setTitle:@"Edit" forState:UIControlStateNormal];
         [zipCodeTextField resignFirstResponder];
-        [doneView setHidden:NO];
+//        [doneView setHidden:NO];
         
         NSString  * postStr  = [NSString stringWithFormat:@"is_man=%i&is_interested_man=%i&is_single=%i&religion_priority=%i&match_zipcode=%@&distance_range=%i&min_age=%i&max_age=%i&min_height=%i&max_height=%i",sexFlag, interestFlag, singleFlag, religionFlag, zipCodeTextField.text, (int)distanceSlider.value,leftAge,rightAge, leftHeight, rightHeight];
         
@@ -176,7 +183,7 @@
           }else{
               [[[UIAlertView alloc] initWithTitle:@"" message:@"Failed!" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil] show ];
           }
-    }
+ //   }
 
 }
 
@@ -193,97 +200,110 @@
 // Edit Method
 -(IBAction)onSexMan:(id)sender
 {
-    if (!sexFlag) {
-            sex_man_button.backgroundColor = FIXED_LIGHT_GRAY_COLOR;
-        sex_woman_button.backgroundColor = [UIColor clearColor];
-        sexFlag = YES;
-    }
+    sexFlag = YES;
+    [self configSex];
 }
 
 -(IBAction)onSexWoman:(id)sender
 {
-    if (sexFlag)
-   {
-        sex_man_button.backgroundColor = [UIColor clearColor];
-        sex_woman_button.backgroundColor = FIXED_LIGHT_GRAY_COLOR;
-       sexFlag = NO;
-    }
-    
+    sexFlag = NO;
+    [self configSex];
 }
 
+-(void)configSex{
+    
+    if (sexFlag) {
+        sex_man_button.backgroundColor = FIXED_LIGHT_GRAY_COLOR;
+        sex_woman_button.backgroundColor = [UIColor clearColor];
+    }else{
+        sex_man_button.backgroundColor = [UIColor clearColor];
+        sex_woman_button.backgroundColor = FIXED_LIGHT_GRAY_COLOR;
+    }
+}
     
 -(IBAction)onInterestMen:(id)sender
 {
-    if (!interestFlag) {
-        interest_men_button.backgroundColor = FIXED_LIGHT_GRAY_COLOR;
-        interest_women_button.backgroundColor = [UIColor clearColor];
-        interestFlag = YES;
-    }
+    interestFlag = YES;
+    [self configInterest];
 }
 
 -(IBAction)onInterestWomen:(id)sender
 {
-    if (interestFlag)
-    {
-            interest_men_button.backgroundColor = [UIColor clearColor];
-            interest_women_button.backgroundColor = FIXED_LIGHT_GRAY_COLOR;
-            interestFlag = NO;
+     interestFlag = NO;
+    [self configInterest];
+}
+
+-(void)configInterest{
+    
+    if (interestFlag) {
+        interest_men_button.backgroundColor = FIXED_LIGHT_GRAY_COLOR;
+        interest_women_button.backgroundColor = [UIColor clearColor];
+    }else{
+        interest_men_button.backgroundColor = [UIColor clearColor];
+        interest_women_button.backgroundColor = FIXED_LIGHT_GRAY_COLOR;
     }
-        
-    }
+}
 
 
 -(IBAction)onSingleYes:(id)sender
 {
-    if (!singleFlag) {
-        single_yes_button.backgroundColor = FIXED_LIGHT_GRAY_COLOR;
-        single_no_button.backgroundColor = [UIColor clearColor];
-        singleFlag = YES;
-    }
+    singleFlag = YES;
+    [self configSingle];
 }
 
 -(IBAction)onSingleNo:(id)sender
 {
-    if (singleFlag)
-    {
+    singleFlag = NO;
+    [self configSingle];
+}
+
+-(void)configSingle{
+    
+    if (singleFlag) {
+        single_yes_button.backgroundColor = FIXED_LIGHT_GRAY_COLOR;
+        single_no_button.backgroundColor = [UIColor clearColor];
+    }else{
         single_yes_button.backgroundColor = [UIColor clearColor];
         single_no_button.backgroundColor = FIXED_LIGHT_GRAY_COLOR;
-        singleFlag = YES;
     }
-    
 }
 
 
 -(IBAction)onReligionNot:(id)sender
 {
-    if (religionFlag != 0) {
-        religion_not_button.backgroundColor = FIXED_LIGHT_GRAY_COLOR;
-        religion_kind_button.backgroundColor = [UIColor clearColor];
-        religion_very_button.backgroundColor = [UIColor clearColor];
-        religionFlag = 0;
-    }
+    religionFlag = 0;
+    [self configReligion];
 }
 
 
 -(IBAction)onReligionKind:(id)sender
 {
-    if (religionFlag != 1) {
-        religion_not_button.backgroundColor =  [UIColor clearColor];
-        religion_kind_button.backgroundColor = FIXED_LIGHT_GRAY_COLOR;
-        religion_very_button.backgroundColor = [UIColor clearColor];
-        religionFlag = 1;
-    }
+    religionFlag = 1;
+    [self configReligion];
 }
 
 
 -(IBAction)onReligionVery:(id)sender
 {
-    if (religionFlag != 2) {
-        religion_not_button.backgroundColor = [UIColor clearColor];
+    religionFlag = 2;
+    [self configReligion];
+}
 
+-(void)configReligion{
+    
+    if (religionFlag == 0) {
+        religion_not_button.backgroundColor = FIXED_LIGHT_GRAY_COLOR;
+        religion_kind_button.backgroundColor = [UIColor clearColor];
+        religion_very_button.backgroundColor = [UIColor clearColor];
+    }else if(religionFlag == 1){
+        religion_not_button.backgroundColor =  [UIColor clearColor];
+        religion_kind_button.backgroundColor = FIXED_LIGHT_GRAY_COLOR;
+        religion_very_button.backgroundColor = [UIColor clearColor];
+    }else if(religionFlag == 2){
+        religion_not_button.backgroundColor = [UIColor clearColor];
+        
         religion_kind_button.backgroundColor = [UIColor clearColor];
         religion_very_button.backgroundColor =FIXED_LIGHT_GRAY_COLOR;
-        religionFlag = 2;
     }
 }
 
@@ -294,6 +314,12 @@
     return YES;
 }
 
+
+
+-(IBAction)onChangeDistance:(id)sender{
+   
+    [self updateDistanceLabel];
+}
 
 - (void) configureAgeSlider
 {
@@ -340,10 +366,10 @@
         forControlEvents:UIControlEventValueChanged];
     
     heightSlider.minimumValue = 0;
-    heightSlider.maximumValue = 26;
+    heightSlider.maximumValue = 260;
     
-    heightSlider.leftValue = leftHeight - 45;
-    heightSlider.rightValue = rightHeight - 45;
+    heightSlider.leftValue = leftHeight - 450;
+    heightSlider.rightValue = rightHeight - 450;
     
     heightSlider.minimumDistance = 1;
     
@@ -359,17 +385,31 @@
     lowerCenter.x = (heightSlider.leftThumbImageView.center.x + heightSlider.frame.origin.x);
     
     heightLowerLabel.center = lowerCenter;
-    int lowValue = 45 + (int)heightSlider.leftValue;
-    heightLowerLabel.text = [NSString stringWithFormat:@"%i'%i\"", lowValue/10, lowValue%10];
+    int lowValue = 450 + (int)heightSlider.leftValue;
+    heightLowerLabel.text = [NSString stringWithFormat:@"%i'%i\"", lowValue/100, lowValue%100];
     leftHeight = lowValue;
     
     CGPoint upperCenter = heightUpperLabel.center;
     upperCenter.x = (heightSlider.rightThumbImageView.center.x +heightSlider.frame.origin.x);
    heightUpperLabel.center = upperCenter;
     
-    int upperValue =  45 + (int)heightSlider.rightValue;
-    heightUpperLabel.text = [NSString stringWithFormat:@"%i'%i\"", upperValue/10, upperValue%10];
+    int upperValue =  450 + (int)heightSlider.rightValue;
+    heightUpperLabel.text = [NSString stringWithFormat:@"%i'%i\"", upperValue/100, upperValue%100];
     rightHeight = upperValue;
+}
+
+
+-(void)updateDistanceLabel{
+    
+    distanceRange = (int)distanceSlider.value;
+    distanceLabel.text = [NSString stringWithFormat:@"%i", distanceRange];
+    
+    float deltaX = distanceRange * distanceSliderScale;
+    
+    CGRect rect = distanceLabel.frame;
+    rect.origin.x = distanceSlider.frame.origin.x + deltaX - 12;
+    
+    [distanceLabel setFrame:rect];
 }
 
 /*

@@ -7,8 +7,9 @@
 //
 
 #import "FXEditProfileVC.h"
+#import "JCTagListView.h"
 
-@interface FXEditProfileVC ()<UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate>
+@interface FXEditProfileVC ()<UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate>
 {
     IBOutlet UIScrollView * editScrollView;
     IBOutlet UIView * editView;
@@ -18,6 +19,8 @@
     IBOutlet UIImageView * profileImageView3;
     IBOutlet UIImageView * profileImageView4;
     IBOutlet UIImageView * profileImageView5;
+    
+
     
     IBOutlet UIButton *addButton1;
     IBOutlet UIButton *addButton2;
@@ -48,7 +51,12 @@
     
     int selected_religion;
     
+    IBOutlet JCTagListView * tagListView;
+    
     BOOL isChangePhotos;
+    
+    float heightSliderScale;
+    
 }
 
 @end
@@ -89,9 +97,10 @@
     
     taglineTextField.delegate = self;
     
-    heightSlider.minimumValue = 45;
-    heightSlider.maximumValue = 71;
+    heightSlider.minimumValue = 450;
+    heightSlider.maximumValue = 710;
     
+    heightSliderScale = (heightSlider.frame.size.width) /260;
     
     for (UIButton * button in religions) {
         button.layer.cornerRadius = button.frame.size.height /2;
@@ -102,10 +111,22 @@
     
     NSString * tempImagePath ;
     UIImageView * tempImageview;
-    for (int i = 0 ; i < [self.user.photo_paths count] ; i++) {
-        tempImagePath = [self.user.photo_paths objectAtIndex:i];
-        tempImageview = [imageViews objectAtIndex:i];
-        [tempImageview setImageURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", APP_RESOURCE_PATH, tempImagePath]]];
+    UIButton * tempButton;
+    
+    for (int i = 0 ; i < [imageViews count] ; i++) {
+         tempImageview = [imageViews objectAtIndex:i];
+        tempButton = [addButtons objectAtIndex:i];
+        if (i < [self.user.photo_paths count]) {
+            tempImagePath = [self.user.photo_paths objectAtIndex:i];
+           
+            [tempImageview setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", APP_RESOURCE_PATH, tempImagePath]]];
+            [tempImageview setUserInteractionEnabled:YES];
+            [tempButton setHidden:YES];
+        }else{
+            [tempImageview setUserInteractionEnabled:NO];
+            [tempButton setHidden:NO];
+        }
+        
     }
     
     taglineTextField.text = self.user.tageline;
@@ -114,6 +135,16 @@
     
     selected_religion = self.user.religion;
     [self onReligion:[religions objectAtIndex:selected_religion]];
+    
+    // TagList Initinalize
+    
+    [tagListView setCanSeletedTags:YES];
+    [tagListView.tags addObjectsFromArray:TAG_LIST];
+    [tagListView.seletedTags addObjectsFromArray:self.user.interest];
+    [tagListView setCompletionBlockWithSeleted:^(NSInteger index) {
+        
+    }];
+    
     
 }
 
@@ -125,6 +156,11 @@
 
 -(IBAction)onSave:(id)sender
 {
+    if (tagListView.seletedTags == nil || [tagListView.seletedTags count] < 5 ) {
+        [[[UIAlertView alloc] initWithTitle:@"Message" message:@"Please Choose 5+ Tags!" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil] show ];
+        return;
+    }
+    
     MBProgressHUD * mhud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     mhud.labelText = @"Saving...";
     NSMutableArray * photos_paths = self.user.photo_paths;
@@ -143,11 +179,11 @@
     
     SBJsonWriter * writer = [SBJsonWriter new];
     NSString * photoPathStr =  [writer stringWithObject:photos_paths];
-
+    NSString * selectedTags = [writer stringWithObject:tagListView.seletedTags];
     
-    NSString * postStr = [NSString stringWithFormat:@"tagline=%@&height=%i&religion=%i&photo_path=%@",taglineTextField.text, (int)heightSlider.value, selected_religion, photoPathStr];
+    NSString * postStr = [NSString stringWithFormat:@"tagline=%@&height=%i&religion=%i&photo_path=%@&interest=%@",taglineTextField.text, (int)heightSlider.value, selected_religion, photoPathStr, selectedTags];
     
-    if (![self.user saveUserProfile:postStr withView:nil]) {
+    if (![self.user saveUserProfile:postStr withView:self.view]) {
         
        [[[UIAlertView alloc] initWithTitle:@"" message:@"Can not save data .Connection Failed!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil] show];
     }else{
@@ -155,9 +191,9 @@
         self.user.height = (int)heightSlider.value;
         self.user.religion = selected_religion;
         self.user.photo_paths = photos_paths;
+        self.user.interest = tagListView.seletedTags;
     }
     
-    [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
     
     [self onCancel:nil];
 }
@@ -167,22 +203,63 @@
     UIButton * button = (UIButton *)sender;
     activeProfileImageIndex = [addButtons indexOfObject:button];
    
+    [self showAddPhotoSheet];
+}
+
+-(void)showAddPhotoSheet{
     UIActionSheet * actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles: @"Take a Photo", @"Photo Library" ,nil];
+    actionSheet.tag = 1000;
     [actionSheet showInView:self.view];
+
+}
+
+-(IBAction)tapPhotos:(UITapGestureRecognizer *)gesture{
     
+    UIView * gestureView = gesture.view;
+    
+    if ([gestureView isKindOfClass:[UIImageView class]]) {
+        
+        activeProfileImageIndex = [imageViews indexOfObject:gestureView];
+        
+        UIActionSheet * actionSheet = [[UIActionSheet alloc] initWithTitle:nil delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles: @"Delete", @"Change Photo" ,nil];
+        actionSheet.tag = 1001;
+        [actionSheet showInView:self.view];
+    }
+
 }
 
 // Actionsheet Delegate
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    if (buttonIndex == 0) {
-        [self onAddImageFromCamera];
-    }else if (buttonIndex == 1)
-    {
-        [self onAddImageFromLibrary];
+    if (actionSheet.tag == 1000) {
+        if (buttonIndex == 0) {
+            [self onAddImageFromCamera];
+        }else if (buttonIndex == 1)
+        {
+            [self onAddImageFromLibrary];
+        }
+    }else if(actionSheet.tag == 1001){
+        if (buttonIndex == 0) {
+            [self removePhoto];   ///  Remove Photos
+        }else if (buttonIndex == 1)
+        {
+            [self showAddPhotoSheet];
+        }
     }
+   
 }
 
+-(void)removePhoto{
+    
+    UIImageView * tempImageView = [imageViews objectAtIndex:activeProfileImageIndex];
+    [tempImageView setImage:nil];
+    
+    [tempImageView setUserInteractionEnabled:NO];
+    
+    UIButton * tempButton = [addButtons objectAtIndex:activeProfileImageIndex];
+    [tempButton setHidden:NO];
+    
+}
 
 - (void)onAddImageFromCamera
 {
@@ -222,6 +299,10 @@
         
         UIImageView * tempView = (UIImageView *) [imageViews objectAtIndex:activeProfileImageIndex];
         [tempView setImage:resultImage];
+        [tempView setUserInteractionEnabled:YES];
+        
+        UIButton *tempButton = [addButtons objectAtIndex:activeProfileImageIndex];
+        [tempButton setHidden:YES];
         
         isChangePhotos = YES;
      }
@@ -255,8 +336,8 @@
 {
     int value = (int)heightSlider.value;
     NSString * heightStr ;
-    int  digit = value/10;
-    int f =  value%10;
+    int  digit = value/100;
+    int f =  value%100;
     
     if (f == 0) {
         heightStr = [NSString stringWithFormat:@"%i'", digit];
@@ -265,7 +346,16 @@
     }
     heightLabel.text = heightStr;
     
+    int tempValue = value - 450;
+    float deltaX = tempValue * heightSliderScale;
+    
+    CGRect temp_rect = heightLabel.frame;
+    temp_rect.origin.x = heightSlider.frame.origin.x + deltaX - 16;
+    [heightLabel setFrame:temp_rect];
+    
 }
+
+
 
 -(IBAction)onReligion:(id)sender
 {

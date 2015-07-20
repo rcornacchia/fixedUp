@@ -12,7 +12,7 @@
 
 @property (nonatomic, strong) NSString * fb_id;
 @property (nonatomic, strong) NSString * name;
-@property (nonatomic, strong) NSString * interest;
+@property (nonatomic, strong) NSArray * interest;
 @property (nonatomic, assign) double match_score;
 @property (nonatomic, assign) int match_tags;
 

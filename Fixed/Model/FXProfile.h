@@ -16,7 +16,7 @@
 @property(nonatomic, assign) NSInteger age;
 @property(nonatomic, strong) NSString * workplace;
 @property(nonatomic, strong) NSString * schools;
-@property(nonatomic, strong) NSString * interest;
+@property(nonatomic, strong) NSArray * interest;
 @property(nonatomic, strong) NSString * state;
 @property(nonatomic, strong) NSString * city;
 @property(nonatomic, strong) NSString  *street;
@@ -24,6 +24,9 @@
 @property(nonatomic, strong) NSString * tageline;
 @property(nonatomic, assign) int religion;
 @property(nonatomic, strong) NSMutableArray * photo_paths;
+//@property (nonatomic, strong) NSArray * tags;
+
+@property(nonatomic, assign) NSInteger QBUserId;
 
 -(void)fromDictionary:(NSDictionary *)dic;
 

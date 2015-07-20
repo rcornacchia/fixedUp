@@ -31,6 +31,8 @@
     
     NSURL  * tempPath =  [FXUser photoPathFromId:self.userObject.fb_id]  ;
     
+    [self.userImageView setImage:[UIImage imageNamed:@"anonymous"]];
+    
     if ( tempPath != nil ) {
         [self.userImageView setImageWithURL:tempPath];
     }

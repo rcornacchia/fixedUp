@@ -11,6 +11,9 @@
 
 //#define DEBUG_FLAG YES
 
+// Active FB : 829596510466363  Test : 593194480822780
+
+
 #ifdef DEBUG_FLAG
     #define API_URL @"http://172.16.1.148:8083/api/"
     #define SERVER_IP @"http://172.16.1.148:8083"
@@ -22,8 +25,23 @@
     #define APP_RESOURCE_PATH @"http://ec2-52-25-207-152.us-west-2.compute.amazonaws.com/photos/"
 #endif
 
+#define QBAppId  24107
+#define QBServiceKey @"YDqNJff3PKb5hcj"
+#define QBServiceSecret @"pmk2huPjW6txgze"
+#define QBAccountKey @"xRWNqahdGPHbnbvMU2pg"
+
+#define DEFAULT_QBPASSWORD @"123456789"
+
 #define APP ((AppDelegate *)[UIApplication sharedApplication].delegate)
 #define IS_OS_8_OR_LATER ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
+
+
+// Redeem Coins vs Price
+
+#define COIN_1 0.99
+#define COIN_5 4.49;
+#define COIN_10 8.99
+
 
 /// App FONT
 #define FIXED_FONT_12px_BOLD [UIFont fontWithName:@"Kefa" size:12.0]
@@ -43,6 +61,7 @@
 // API Action Name
 
 #define FIXED_API_SIGNIN @"fb_login"
+#define FIXED_API_SUBMIT_QBID @"submitQBUserId"
 #define FIXED_API_SUGGESTED_FRIENDS @"getSuggestedFriendList"
 #define FIXED_API_GET_PROFILE @"getFriendProfile"
 #define FIXED_API_FIX_IT @"fixIt"
@@ -67,7 +86,7 @@
 #define FIXED_API_WITHDRAW_COIN @"withdrawCoin"
 
 
-
+#define TAG_LIST @[@"Carb loader", @"Health nut", @"Nukgfood junkie",@"Marathon runner",@"Cycler",@"Yogi",@"Insta famous",@"Workaholic",@"Day dreamer",@"Party starter",@"Belieber",@"Film fanatic",@"Music maker",@"Playlist professor",@"Beach bum",@"Ski bum",@"Cuddle connoisseur",@"Coffee addict",@"Tea freak",@"Gym rat",@"Smoker",@"Toker",@"Navigator",@"Globetrotter",@"Sight see-er",@"Serial dater",@"Stage five clinger",@"Dirty talker",@"Cereal killer",@"Munchie eater",@"Novel reader",@"Linguist",@"Style icon",@"Trendsetter",@"Hip hopper",@"Line dancer",@"Phish head",@"Rock n roller",@"Festival goer",@"EDM Raver",@"Beer pong champ",@"Dogís best friend",@"Crazy cat person",@"Mold breaker",@"Master debater",@"Netflix binger",@"Early bird",@"Nap star",@"Burrito buff",@"Top chef",@"Snapchat story teller",@"Homebody"]
 
 
 

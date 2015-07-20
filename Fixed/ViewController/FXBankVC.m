@@ -52,17 +52,21 @@
     redeemButton2.layer.cornerRadius = 5;
     redeemButton3.layer.cornerRadius = 5;
     
+    myBankAccountLabel.text = [NSString stringWithFormat:@"$%.2f", self.fixedBank];
+    
 }
 
 
 -(IBAction)onMenu:(id)sender
 {
-    if([self.sideMenuController isMenuVisible])
-    {
-        [self.sideMenuController hideMenuAnimated:YES];
-    }else{
-        [self.sideMenuController showMenuAnimated:YES];
-    }
+    [self.navigationController popViewControllerAnimated:YES];
+    return;
+//    if([self.sideMenuController isMenuVisible])
+//    {
+//        [self.sideMenuController hideMenuAnimated:YES];
+//    }else{
+//        [self.sideMenuController showMenuAnimated:YES];
+//    }
 }
 
 
@@ -79,21 +83,34 @@
 {
     UIButton * button = (UIButton *)sender;
     
+    double redeemAmount = 0;
     NSInteger coinCount = 0;
     if (button == redeemButton1) {
         coinCount = 1;
+        redeemAmount = COIN_1;
     }else if(button == redeemButton2)
     {
         coinCount =5;
+        redeemAmount = COIN_5;
     }else if(button == redeemButton3){
         coinCount = 10;
+        redeemAmount = COIN_10;
     }
     
-    [self redeemCoins:coinCount];
+    if (self.fixedBank < redeemAmount) {
+        
+        [[[UIAlertView alloc] initWithTitle:@"Alert" message:[NSString stringWithFormat:@"You can not redeem %i coins. Please check your FixedBank and  try again !", coinCount] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil] show ];
+        
+    }else{
+    
+        [self redeemCoins:coinCount];
+    }
 }
 
 -(void)redeemCoins:(NSInteger )coinCount
 {
+    
+    
     NSString * keyStr = [NSString stringWithFormat:@"%@_withdrawcoin", [FXUser sharedUser].fb_id];
     [[NSUserDefaults standardUserDefaults] setInteger:coinCount  forKey:keyStr];
     [[NSUserDefaults standardUserDefaults] synchronize];

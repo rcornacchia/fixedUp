@@ -25,11 +25,11 @@
 -(void)renderCell:(FXMatch *)match
 {
     if ([match.user1_id isEqualToString:[FXUser sharedUser].fb_id]) {
-        [self.userPhotoButton setBackgroundImageForState:UIControlStateNormal withURL:[FXUser photoPathFromId:match.user2_id]];
+        [self.userPhotoButton setImageForState:UIControlStateNormal withURL:[FXUser photoPathFromId:match.user2_id] placeholderImage:[UIImage imageNamed:@"anonymous.png"]];
         self.nameLabel.text = match.user2_name;
         self.user_id = match.user2_id;
     }else{
-        [self.userPhotoButton setBackgroundImageForState:UIControlStateNormal withURL:[FXUser photoPathFromId:match.user1_id]];
+        [self.userPhotoButton setImageForState:UIControlStateNormal withURL:[FXUser photoPathFromId:match.user1_id] placeholderImage:[UIImage imageNamed:@"anonymous.png"]];
         self.nameLabel.text = match.user1_name;
         self.user_id =  match.user1_id;
     }

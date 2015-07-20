@@ -152,7 +152,7 @@
     
     NSString* strSubject = [NSString stringWithFormat:@"Fixed APP"];
     [picker setSubject:strSubject];
-    [picker setToRecipients:@[@"fixedApp@gmail.com"]];
+    [picker setToRecipients:@[@"FixedUpApp@gmail.com"]];
     [self presentViewController:picker animated:YES completion:nil];
 
 }

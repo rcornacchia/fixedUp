@@ -89,6 +89,10 @@
 
 -(IBAction)onMenu:(id)sender
 {
+    [self.navigationController popViewControllerAnimated:YES];
+    return;
+    
+    
     if([self.sideMenuController isMenuVisible])
     {
         [self.sideMenuController hideMenuAnimated:YES];

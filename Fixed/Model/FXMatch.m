@@ -85,7 +85,7 @@
 }
 +(BOOL)dislikeMatch:(NSString *)match_id
 {
-    NSDictionary * tempDic = (NSDictionary *) [ServiceApiHelper httpRequestWithAction:FIXED_API_DISLIKE contentParam:[NSString stringWithFormat:@"id=%@", match_id] withView:nil];
+    NSDictionary * tempDic = (NSDictionary *) [ServiceApiHelper httpRequestWithAction:FIXED_API_DISLIKE contentParam:[NSString stringWithFormat:@"id=%@&fb_id=%@", match_id,[FXUser sharedUser].fb_id] withView:nil];
     
     if (tempDic != nil && [tempDic objectForKey:@"success"] != nil ) {
         if ([[tempDic objectForKey:@"success"] isEqualToString:@"OK"]) {

@@ -36,7 +36,18 @@ static FXUser * instance;
         self.single = [[dic objectForKey:@"single"]  boolValue];
         self.workplace = [dic objectForKey:@"workplace"] != nil ? [dic objectForKey:@"workplace"] : @"";
         self.schools = [dic objectForKey:@"schools"] != nil ? [dic objectForKey:@"schools"] : @"";
-        self.interest = [dic objectForKey:@"interest"] != nil ? [dic objectForKey:@"interest"] : @"";
+    
+        NSString * interestStr = [dic objectForKey:@"interest"];
+        
+        self.interest = [[NSArray alloc] init];
+        if (interestStr != nil && ![interestStr isEqualToString:@""]) {
+            NSArray * tempArray = [[SBJsonParser new] objectWithString:interestStr];
+            
+            if (tempArray != nil) {
+                self.interest = tempArray;
+            }
+        }
+    
         self.state = [dic objectForKey:@"state"] != nil ? [dic objectForKey:@"state"] : @"";
         self.city = [dic objectForKey:@"city"] != nil ? [dic objectForKey:@"city"] : @"";
         self.street = [dic objectForKey:@"street"] != nil ? [dic objectForKey:@"street"] : @"";
@@ -68,6 +79,9 @@ static FXUser * instance;
             self.photo_paths = [NSMutableArray arrayWithArray:tempArray];
         }
     }
+    
+   
+    
         self.fix_reminder = [[dic objectForKey:@"fix_reminder"] boolValue];
         self.cash_notification = [[dic objectForKey:@"cash_notification"] boolValue];
         self.match_notification = [[dic objectForKey:@"match_notification"] boolValue];
@@ -79,6 +93,8 @@ static FXUser * instance;
         self.coins = [[dic objectForKey:@"coins"] intValue];
     
         self.myFriendList = (NSArray *)[dic objectForKey:@"my_friend_list"];
+    
+    self.QBUserId = [dic objectForKey:@"QBUserId"] != nil ?[[dic objectForKey:@"QBUserId"] integerValue]: 0;
     
 }
 
@@ -203,6 +219,7 @@ static FXUser * instance;
     profile.tageline = self.tageline;
     profile.religion =self.religion;
     profile.photo_paths =self.photo_paths;
+ //   profile.tags = self.tags;
    
     return profile;
 }
@@ -213,8 +230,9 @@ static FXUser * instance;
     if (tempDic != nil && [tempDic objectForKey:@"flag"] != nil ) {
         
         FXUser * user = [FXUser sharedUser];
+        NSData * mainPhotoData = [NSData dataWithContentsOfURL:[FXUser photoPathFromId:user.fb_id]];
         
-        if ([[tempDic objectForKey:@"flag"] isEqualToString:@"new"]) {
+        if ([[tempDic objectForKey:@"flag"] isEqualToString:@"new"] || mainPhotoData == nil) {
             
             NSString * userImageUrlStr = [NSString stringWithFormat:@"https://graph.facebook.com/%@/picture?type=large", user.fb_id];
             NSData * imageData = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:userImageUrlStr]];
@@ -237,6 +255,25 @@ static FXUser * instance;
     
     return NO;
 }
+
+
+-(void)submitQBUserId:(NSInteger)userId;
+{
+    NSString * postStr = [NSString stringWithFormat:@"fb_id=%@&QBUserId=%i", self.fb_id, userId];
+    if(self.QBUserId ==  0){
+        NSDictionary *tempDic = (NSDictionary *)[ServiceApiHelper httpRequestWithAction:FIXED_API_SUBMIT_QBID contentParam:postStr withView:nil];
+        
+        if (tempDic != nil && [tempDic objectForKey:@"success"] != nil ) {
+            
+            if ([[tempDic objectForKey:@"success"] isEqualToString:@"OK"]) {
+                self.QBUserId = userId;
+                return ;
+            }
+        }
+    }
+    return ;
+}
+
 
 #pragma mark - pic upload
 
@@ -520,9 +557,9 @@ static FXUser * instance;
         }
 
     }
-    
     return NO;
 }
+
 -(BOOL)withdrawCoin:(UIView *)view{
     NSString * keyStr = [NSString stringWithFormat:@"%@_withdrawcoin", self.fb_id];
     NSInteger coin_count = [[NSUserDefaults standardUserDefaults] integerForKey:keyStr];
@@ -536,6 +573,8 @@ static FXUser * instance;
                 [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:keyStr];
                 [[NSUserDefaults standardUserDefaults] synchronize];
                 
+                
+                // Reset Coins and Bank Amount
                 return YES;
                 
             }

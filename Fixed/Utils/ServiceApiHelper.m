@@ -73,6 +73,8 @@
             progressStr = @"Saving...";
         }else if ([actionName isEqualToString:FIXED_API_SAVE_PROFILE]){
              progressStr = @"Saving...";
+        }else if([actionName isEqualToString:FIXED_API_WITHDRAW_COIN]){
+            progressStr = @"Redeeming...";
         }
         
         mHud.labelText = progressStr;
@@ -108,6 +110,11 @@
     NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:&error];
     
      NSLog(@"Action Name: %@", actionName);
+    
+    if(view != nil){
+        [MBProgressHUD hideAllHUDsForView:view animated:YES];
+    }
+    
     if (error) {
         
         NSLog(@"Error: %@", error);
@@ -119,9 +126,6 @@
         
         NSLog(@"%@", jsonResult);
         
-        if(view != nil){
-            [MBProgressHUD hideAllHUDsForView:view animated:YES];
-        }
         return [[SBJsonParser new] objectWithString:jsonResult];
     }
 }

@@ -48,10 +48,9 @@
         loginFlag = YES;
         [self fetchFacebookUserProfile];
     }else{
-        //       logInWithReadPermissions logInWithPublishPermissions
-        // user_interests user_relationships user_birthday user_work_history  read_custom_friendlists  user_religion_politics  user_education_history
         
-        NSArray * permissions = [[NSArray alloc] initWithObjects:@"email",@"user_interests",@"user_relationships",@"user_birthday",@"user_work_history",@"read_custom_friendlists",@"user_religion_politics",@"user_education_history", nil];
+        
+        NSArray * permissions = [[NSArray alloc] initWithObjects:@"email",@"user_hometown",@"user_location",@"user_relationships",@"user_birthday",@"user_work_history",@"user_religion_politics",@"user_education_history",@"user_friends", nil];
         [APP.loginManager logInWithReadPermissions:permissions handler:^(FBSDKLoginManagerLoginResult *result, NSError *error) {
             
             if (error != nil) {
@@ -95,7 +94,7 @@
             
             NSString * tempStr;
             NSArray * tempArray;
-            NSDictionary * dic;
+           
             
             user.fb_id = [tempDic objectForKey:@"id"];
             user.name = [tempDic objectForKey:@"name"]; // last_name, middle_name,
@@ -151,8 +150,7 @@
             }
             
             user.schools = educationStr;
-            user.interest = [tempDic objectForKey:@"quotes"] == nil ? @"" : [tempDic objectForKey:@"quotes"];
-            
+           
             NSDictionary * locationDic = [tempDic objectForKey:@"address"];
             NSString * stateStr = @"";
             NSString * cityStr = @"";
@@ -179,6 +177,8 @@
         }
         
         [MBProgressHUD hideAllHUDsForView:self.view animated:YES];
+        
+         [[[UIAlertView alloc] initWithTitle:@"" message:@"Facebook Connection Failed !" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil] show];
         
         }];
     
@@ -220,7 +220,7 @@
                      APP.deviceToken = @"";
                  }
                  
-                 NSString * postStr = [NSString stringWithFormat:@"fb_id=%@&name=%@&email=%@&sex=%i&birthday=%@&single=%i&workplace=%@&schools=%@&interest=%@&state=%@&city=%@&street=%@&zipcode=%@&latitude=%.6f&longitude=%.6f&religion=%i&devicetoken=%@&fb_friend_list=%@",user.fb_id, user.name,user.email, user.sex,user.birthday, user.single, user.workplace, user.schools, user.interest, user.state, user.city, user.street, user.zipcode, APP.currentLocation.coordinate.latitude, APP.currentLocation.coordinate.longitude, user.religion,APP.deviceToken,fbFriendListStr];
+                 NSString * postStr = [NSString stringWithFormat:@"fb_id=%@&name=%@&email=%@&sex=%i&birthday=%@&single=%i&workplace=%@&schools=%@&state=%@&city=%@&street=%@&zipcode=%@&latitude=%.6f&longitude=%.6f&religion=%i&devicetoken=%@&fb_friend_list=%@",user.fb_id, user.name,user.email, user.sex,user.birthday, user.single, user.workplace, user.schools, user.state, user.city, user.street, user.zipcode, APP.currentLocation.coordinate.latitude, APP.currentLocation.coordinate.longitude, user.religion,APP.deviceToken,fbFriendListStr];
                  
                  if ([[FXUser sharedUser] fbSigin:postStr withView:self.view]) {
                      
@@ -249,6 +249,95 @@
     APP.activeContainer = contentViewController;
     
     [APP.window setRootViewController:sideMenu];
+    
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self QBChatLogin];
+    });
+   
+}
+
+
+-(void)QBChatLogin{
+    
+    QBSessionParameters *extendedAuthRequest = [[QBSessionParameters alloc] init];
+    
+    extendedAuthRequest.userLogin = [FXUser sharedUser].fb_id;
+    extendedAuthRequest.userPassword = DEFAULT_QBPASSWORD;
+    
+    //
+    __weak __typeof(self)weakSelf = self;
+    [QBRequest createSessionWithExtendedParameters:extendedAuthRequest successBlock:^(QBResponse *response, QBASession *session) {
+        
+        
+        // Save current user
+        //
+        QBUUser *currentUser = [QBUUser user];
+        currentUser.ID = session.userID;
+    
+        currentUser.login = [FXUser sharedUser].fb_id;;
+        currentUser.password = DEFAULT_QBPASSWORD;
+        
+        // Login to QuickBlox Chat
+        //
+        [[ChatService shared] loginWithUser:currentUser completionBlock:^{
+        
+             [[FXUser sharedUser] submitQBUserId:currentUser.ID];
+            
+            NSLog(@"QB Log in !");
+   
+        }];
+        
+    } errorBlock:^(QBResponse *response)
+    {
+        if (response.status == QBResponseStatusCodeUnAuthorized) {
+            
+            [self QBSignup];
+        }else{
+        
+        NSLog(@"QB Create Session Failed!");
+        }
+        
+    }];
+}
+
+// Create QuickBlox User entity
+-(void)QBSignup{
+    
+    [QBRequest createSessionWithSuccessBlock:^(QBResponse *response, QBASession *session) {
+        
+        QBUUser *user = [QBUUser user];
+        user.password = DEFAULT_QBPASSWORD;
+        user.login = [FXUser sharedUser].fb_id;
+        user.fullName = [FXUser sharedUser].name;
+        
+        // create User
+        [QBRequest signUp:user successBlock:^(QBResponse *response, QBUUser *user) {
+            
+            [[FXUser sharedUser] submitQBUserId:user.ID];
+            
+            [self QBChatLogin];
+            
+        } errorBlock:^(QBResponse *response) {
+            
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", "")
+                                                            message:[response.error description]
+                                                           delegate:nil
+                                                  cancelButtonTitle:NSLocalizedString(@"OK", "")
+                                                  otherButtonTitles:nil];
+            [alert show];
+            
+        }];
+
+    } errorBlock:^(QBResponse *response) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", "")
+                                                        message:[response.error description]
+                                                       delegate:nil
+                                              cancelButtonTitle:NSLocalizedString(@"OK", "")
+                                              otherButtonTitles:nil];
+        [alert show];
+    }];
+   
 }
 
 /*

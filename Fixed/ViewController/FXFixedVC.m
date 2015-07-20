@@ -29,6 +29,7 @@
     
     IBOutlet UIView * outofView;
     IBOutlet UILabel * timeLabel;
+    IBOutlet UILabel * outofFixesLabel;
     
     IBOutlet UIView * fixView;
     IBOutlet UIScrollView * fixScrollView;
@@ -177,6 +178,7 @@
     
     
     if ([FXUser sharedUser].activeFixes <= 0 ) {
+        [outofFixesLabel setHidden:NO];
         [outofView setHidden:NO];
         
         timeLabel.text = [NSString stringWithFormat:@"GET MORE IN \n %@",[self getLocalTimeFromUTC]];
@@ -193,6 +195,7 @@
     if (self.facebookFriendList == nil) {
         [mainFriendsView setHidden:YES];
         [outofView setHidden:NO];
+        [outofFixesLabel setHidden:YES];
         [timeLabel setText:@"You don't have Friends"];
         return;
     }
@@ -269,7 +272,7 @@
     tempImageView.layer.cornerRadius = tempImageView.frame.size.width/2;
     NSDictionary * tempDic = [searchResultArray objectAtIndex:indexPath.row];
     
-    [tempImageView setImageWithURL:[FXUser photoPathFromId:[tempDic objectForKey:@"id"]]];
+    [tempImageView setImageWithURL:[FXUser photoPathFromId:[tempDic objectForKey:@"id"]] placeholderImage:[UIImage imageNamed:@"anonymous"]];
     tempNameLabel.text = [tempDic objectForKey:@"name"] == nil ? @"" :[tempDic objectForKey:@"name"];
     
     return cell;

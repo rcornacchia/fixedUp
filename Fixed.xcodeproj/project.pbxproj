@@ -191,6 +191,10 @@
 		21E3D6701B27D46400E54499 /* FXProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 21E3D66F1B27D46400E54499 /* FXProfile.m */; };
 		21E9800A1B2B2813004EA03C /* 123456754.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 21E980091B2B2813004EA03C /* 123456754.jpg */; };
 		21E9800C1B2B336D004EA03C /* round_green_checkbutton_checked@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 21E9800B1B2B336D004EA03C /* round_green_checkbutton_checked@2x.png */; };
+		21F265571B42D5AE00D7FCE9 /* anonymous@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 21F265561B42D5AE00D7FCE9 /* anonymous@2x.png */; };
+		21F2655D1B43CCC300D7FCE9 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21F2655C1B43CCC300D7FCE9 /* StoreKit.framework */; };
+		21F265AC1B43D5C100D7FCE9 /* MKStoreManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 21F265A91B43D5C100D7FCE9 /* MKStoreManager.m */; };
+		21F265AD1B43D5C100D7FCE9 /* MKStoreObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 21F265AB1B43D5C100D7FCE9 /* MKStoreObserver.m */; };
 		21FB08001B21981800D2657F /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 21FB07FF1B21981800D2657F /* UIImage+ImageEffects.m */; };
 		21FB08031B21989300D2657F /* BlurImageGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 21FB08021B21989300D2657F /* BlurImageGenerator.m */; };
 		21FB08061B219FB400D2657F /* app_loading_logo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 21FB08041B219FB400D2657F /* app_loading_logo@2x.png */; };
@@ -198,6 +202,10 @@
 		21FB08091B21A07100D2657F /* launch5s.png in Resources */ = {isa = PBXBuildFile; fileRef = 21FB08081B21A07100D2657F /* launch5s.png */; };
 		21FB080D1B21CD7600D2657F /* UIGestureRecognizer+DraggingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 21FB080C1B21CD7600D2657F /* UIGestureRecognizer+DraggingAdditions.m */; };
 		21FB08101B21CE6D00D2657F /* UIView+ZSViewAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 21FB080F1B21CE6D00D2657F /* UIView+ZSViewAdditions.m */; };
+		653EB3621B550CDB0076254E /* nav_back_green@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 653EB3611B550CDB0076254E /* nav_back_green@2x.png */; };
+		653EB36A1B55160E0076254E /* JCCollectionViewTagFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 653EB3651B55160E0076254E /* JCCollectionViewTagFlowLayout.m */; };
+		653EB36B1B55160E0076254E /* JCTagCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 653EB3671B55160E0076254E /* JCTagCell.m */; };
+		653EB36C1B55160E0076254E /* JCTagListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 653EB3691B55160E0076254E /* JCTagListView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -466,6 +474,13 @@
 		21E3D66F1B27D46400E54499 /* FXProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FXProfile.m; sourceTree = "<group>"; };
 		21E980091B2B2813004EA03C /* 123456754.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 123456754.jpg; sourceTree = "<group>"; };
 		21E9800B1B2B336D004EA03C /* round_green_checkbutton_checked@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "round_green_checkbutton_checked@2x.png"; sourceTree = "<group>"; };
+		21F265561B42D5AE00D7FCE9 /* anonymous@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "anonymous@2x.png"; sourceTree = "<group>"; };
+		21F2655C1B43CCC300D7FCE9 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		21F265A71B43D5C100D7FCE9 /* FeatureID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeatureID.h; sourceTree = "<group>"; };
+		21F265A81B43D5C100D7FCE9 /* MKStoreManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKStoreManager.h; sourceTree = "<group>"; };
+		21F265A91B43D5C100D7FCE9 /* MKStoreManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKStoreManager.m; sourceTree = "<group>"; };
+		21F265AA1B43D5C100D7FCE9 /* MKStoreObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKStoreObserver.h; sourceTree = "<group>"; };
+		21F265AB1B43D5C100D7FCE9 /* MKStoreObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKStoreObserver.m; sourceTree = "<group>"; };
 		21FB07FE1B21981800D2657F /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
 		21FB07FF1B21981800D2657F /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
 		21FB08011B21989300D2657F /* BlurImageGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlurImageGenerator.h; sourceTree = "<group>"; };
@@ -477,6 +492,13 @@
 		21FB080C1B21CD7600D2657F /* UIGestureRecognizer+DraggingAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIGestureRecognizer+DraggingAdditions.m"; sourceTree = "<group>"; };
 		21FB080E1B21CE6D00D2657F /* UIView+ZSViewAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+ZSViewAdditions.h"; sourceTree = "<group>"; };
 		21FB080F1B21CE6D00D2657F /* UIView+ZSViewAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+ZSViewAdditions.m"; sourceTree = "<group>"; };
+		653EB3611B550CDB0076254E /* nav_back_green@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nav_back_green@2x.png"; sourceTree = "<group>"; };
+		653EB3641B55160E0076254E /* JCCollectionViewTagFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCCollectionViewTagFlowLayout.h; sourceTree = "<group>"; };
+		653EB3651B55160E0076254E /* JCCollectionViewTagFlowLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCCollectionViewTagFlowLayout.m; sourceTree = "<group>"; };
+		653EB3661B55160E0076254E /* JCTagCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCTagCell.h; sourceTree = "<group>"; };
+		653EB3671B55160E0076254E /* JCTagCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCTagCell.m; sourceTree = "<group>"; };
+		653EB3681B55160E0076254E /* JCTagListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JCTagListView.h; sourceTree = "<group>"; };
+		653EB3691B55160E0076254E /* JCTagListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JCTagListView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -505,6 +527,7 @@
 				21D9A0641B24957D00E682DC /* Quickblox.framework in Frameworks */,
 				21571A7B1B012CA0003B326E /* FBSDKCoreKit.framework in Frameworks */,
 				213D55571B0BF4B0002DF08C /* LTSupport2.framework in Frameworks */,
+				21F2655D1B43CCC300D7FCE9 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -671,6 +694,8 @@
 		21571A051B012AE9003B326E /* icons */ = {
 			isa = PBXGroup;
 			children = (
+				653EB3611B550CDB0076254E /* nav_back_green@2x.png */,
+				21F265561B42D5AE00D7FCE9 /* anonymous@2x.png */,
 				21E9800B1B2B336D004EA03C /* round_green_checkbutton_checked@2x.png */,
 				21E980091B2B2813004EA03C /* 123456754.jpg */,
 				21FB08081B21A07100D2657F /* launch5s.png */,
@@ -774,6 +799,8 @@
 		21571A661B012B1C003B326E /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				653EB3631B55160E0076254E /* TagList */,
+				21F265A61B43D5C100D7FCE9 /* in-app */,
 				21D9A0DE1B258DA300E682DC /* AFNetworking */,
 				21D9A0F21B258DA300E682DC /* UIKit+AFNetworking */,
 				21D9A0961B25046700E682DC /* DateTools */,
@@ -874,6 +901,7 @@
 		21D9A0671B25001700E682DC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				21F2655C1B43CCC300D7FCE9 /* StoreKit.framework */,
 				21D9A0841B25014D00E682DC /* libsqlite3.dylib */,
 				21D9A0851B25014D00E682DC /* MediaPlayer.framework */,
 				21D9A0681B2500FC00E682DC /* Accelerate.framework */,
@@ -1081,6 +1109,18 @@
 			path = "UIKit+AFNetworking";
 			sourceTree = "<group>";
 		};
+		21F265A61B43D5C100D7FCE9 /* in-app */ = {
+			isa = PBXGroup;
+			children = (
+				21F265A71B43D5C100D7FCE9 /* FeatureID.h */,
+				21F265A81B43D5C100D7FCE9 /* MKStoreManager.h */,
+				21F265A91B43D5C100D7FCE9 /* MKStoreManager.m */,
+				21F265AA1B43D5C100D7FCE9 /* MKStoreObserver.h */,
+				21F265AB1B43D5C100D7FCE9 /* MKStoreObserver.m */,
+			);
+			path = "in-app";
+			sourceTree = "<group>";
+		};
 		21FB07FD1B21981800D2657F /* Blur */ = {
 			isa = PBXGroup;
 			children = (
@@ -1101,6 +1141,19 @@
 				21FB080C1B21CD7600D2657F /* UIGestureRecognizer+DraggingAdditions.m */,
 			);
 			path = Drag;
+			sourceTree = "<group>";
+		};
+		653EB3631B55160E0076254E /* TagList */ = {
+			isa = PBXGroup;
+			children = (
+				653EB3641B55160E0076254E /* JCCollectionViewTagFlowLayout.h */,
+				653EB3651B55160E0076254E /* JCCollectionViewTagFlowLayout.m */,
+				653EB3661B55160E0076254E /* JCTagCell.h */,
+				653EB3671B55160E0076254E /* JCTagCell.m */,
+				653EB3681B55160E0076254E /* JCTagListView.h */,
+				653EB3691B55160E0076254E /* JCTagListView.m */,
+			);
+			path = TagList;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1152,6 +1205,12 @@
 				TargetAttributes = {
 					215719D91B011FF7003B326E = {
 						CreatedOnToolsVersion = 6.2;
+						DevelopmentTeam = MQK8CQY77C;
+						SystemCapabilities = {
+							com.apple.InAppPurchase = {
+								enabled = 1;
+							};
+						};
 					};
 					215719F21B011FF7003B326E = {
 						CreatedOnToolsVersion = 6.2;
@@ -1200,6 +1259,7 @@
 				215719E91B011FF7003B326E /* Main.storyboard in Resources */,
 				21D9A05B1B247E7D00E682DC /* rangeSliderTrack.png in Resources */,
 				21571A611B012AE9003B326E /* sample_photo1@2x.png in Resources */,
+				653EB3621B550CDB0076254E /* nav_back_green@2x.png in Resources */,
 				21571A361B012AE9003B326E /* addperson@2x.png in Resources */,
 				21571A4A1B012AE9003B326E /* fix_it@2x.png in Resources */,
 				21571A4B1B012AE9003B326E /* fixed@2x.png in Resources */,
@@ -1213,6 +1273,7 @@
 				21571A5A1B012AE9003B326E /* menu_white@2x.png in Resources */,
 				21571A541B012AE9003B326E /* mainperson@2x.png in Resources */,
 				21571A5F1B012AE9003B326E /* reject@2x.png in Resources */,
+				21F265571B42D5AE00D7FCE9 /* anonymous@2x.png in Resources */,
 				21D9A05E1B247E7D00E682DC /* rangeSliderTrackRange.png in Resources */,
 				21E9800A1B2B2813004EA03C /* 123456754.jpg in Resources */,
 				21571A4C1B012AE9003B326E /* fixedcoin@2x.png in Resources */,
@@ -1301,6 +1362,7 @@
 			files = (
 				21D9A1091B258DA400E682DC /* AFURLConnectionOperation.m in Sources */,
 				213D55801B0C71A9002DF08C /* FXUser.m in Sources */,
+				21F265AC1B43D5C100D7FCE9 /* MKStoreManager.m in Sources */,
 				21D9A1101B258DA400E682DC /* UIButton+AFNetworking.m in Sources */,
 				21D9A0C71B25046700E682DC /* DTTimePeriodChain.m in Sources */,
 				2189D2541B0CB8290077E391 /* FXSettingVC.m in Sources */,
@@ -1309,6 +1371,7 @@
 				21FB08031B21989300D2657F /* BlurImageGenerator.m in Sources */,
 				21D9A0921B2503AF00E682DC /* ChatService.m in Sources */,
 				21D9A0DA1B25046700E682DC /* TWMessageBarManager.m in Sources */,
+				653EB36C1B55160E0076254E /* JCTagListView.m in Sources */,
 				2189D25D1B0CBBF50077E391 /* FXEditProfileVC.m in Sources */,
 				21E3D66D1B27D13200E54499 /* FXFriend.m in Sources */,
 				21D9A0D01B25046700E682DC /* README.md in Sources */,
@@ -1337,8 +1400,10 @@
 				2189D2571B0CBBAD0077E391 /* FXMyMatchVC.m in Sources */,
 				21D9A0CC1B25046700E682DC /* README.md in Sources */,
 				21E3D6701B27D46400E54499 /* FXProfile.m in Sources */,
+				653EB36A1B55160E0076254E /* JCCollectionViewTagFlowLayout.m in Sources */,
 				213D55671B0BFC88002DF08C /* FXFixedVC.m in Sources */,
 				21D9A0D11B25046700E682DC /* SVIndefiniteAnimatedView.m in Sources */,
+				21F265AD1B43D5C100D7FCE9 /* MKStoreObserver.m in Sources */,
 				21D9A1081B258DA400E682DC /* AFSecurityPolicy.m in Sources */,
 				2189D2641B0CD39D0077E391 /* FXChatVC.m in Sources */,
 				213D55551B0BF33D002DF08C /* FXLoginVC.m in Sources */,
@@ -1369,6 +1434,7 @@
 				21D9A0CA1B25046700E682DC /* NSDate+DateTools.m in Sources */,
 				21D9A0C51B25046700E682DC /* DTError.m in Sources */,
 				21D9A1121B258DA400E682DC /* UIProgressView+AFNetworking.m in Sources */,
+				653EB36B1B55160E0076254E /* JCTagCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1501,12 +1567,13 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Michael Kantor (R4PVYXM5A7)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Michael Kantor (R4PVYXM5A7)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Fixed/SDK/Facebook",
 					"$(PROJECT_DIR)/Fixed/Utils",
-					/Users/wang/Documents/FacebookSDK,
 					"$(PROJECT_DIR)/Fixed/SDK/Quickblox",
+					/Users/heliumsoft/Documents/FacebookSDK,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Fixed/PrefixHeader.pch;
@@ -1526,7 +1593,7 @@
 					"-lstdc++",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "1c71d19c-ec12-4efc-802d-c785d4395659";
+				PROVISIONING_PROFILE = "2e519b6c-ad8c-4581-b6e5-185a3c9f7628";
 				VALID_ARCHS = "armv7 armv7s";
 			};
 			name = Debug;
@@ -1538,12 +1605,13 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Michael Kantor (R4PVYXM5A7)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Michael Kantor (R4PVYXM5A7)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Fixed/SDK/Facebook",
 					"$(PROJECT_DIR)/Fixed/Utils",
-					/Users/wang/Documents/FacebookSDK,
 					"$(PROJECT_DIR)/Fixed/SDK/Quickblox",
+					/Users/heliumsoft/Documents/FacebookSDK,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Fixed/PrefixHeader.pch;
@@ -1562,7 +1630,7 @@
 					"-lstdc++",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "1c71d19c-ec12-4efc-802d-c785d4395659";
+				PROVISIONING_PROFILE = "2e519b6c-ad8c-4581-b6e5-185a3c9f7628";
 				VALID_ARCHS = "armv7 armv7s";
 			};
 			name = Release;

@@ -15,7 +15,16 @@
 {
     self.fb_id = [dic objectForKey:@"fb_id"] ;
     self.name = [dic objectForKey:@"name"] ;
-    self.interest = [dic objectForKey:@"interest"] != nil ? [dic objectForKey:@"interest"] :@"";
+    NSString * interestStr = [dic objectForKey:@"interest"];
+    
+    self.interest = [[NSArray alloc] init];
+    if (interestStr != nil && ![interestStr isEqualToString:@""]) {
+        NSArray * tempArray = [[SBJsonParser new] objectWithString:interestStr];
+        
+        if (tempArray != nil) {
+            self.interest = tempArray;
+        }
+    }
     self.match_score = [[dic objectForKey:@"match_score"] doubleValue];
     self.match_tags = [[dic objectForKey:@"match_tags"] intValue];
 }

@@ -99,8 +99,8 @@
     UILabel * nameLabel1 = (UILabel * )[cell viewWithTag:125];
     UILabel * nameLabel2 = (UILabel * )[cell viewWithTag:126];
     
-    [userImageView1 setImageURL:[FXUser photoPathFromId:match.user1_id]];
-    [userImageView2 setImageURL:[FXUser photoPathFromId:match.user2_id]];
+    [userImageView1 setImageWithURL:[FXUser photoPathFromId:match.user1_id]];
+    [userImageView2 setImageWithURL:[FXUser photoPathFromId:match.user2_id]];
     
     nameLabel1.text = match.user1_name;
     nameLabel2.text = match.user2_name;

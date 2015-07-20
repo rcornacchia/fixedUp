@@ -29,6 +29,7 @@
 #import "SoundService.h"
 #import "ChatService.h"
 
+#import "MKStoreManager.h"
 
 #import "Constants.h"
 #import "ServiceApiHelper.h"

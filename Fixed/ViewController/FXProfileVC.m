@@ -24,13 +24,13 @@
     NSInteger beforePageIndex;
     NSInteger baseIndex;
     
-  IBOutlet UIButton * menuButton;
+    IBOutlet UIButton * menuButton;
     IBOutlet UIButton * editButton;
     
+    IBOutlet UIScrollView * profileScrollView;
+    IBOutlet UIScrollView * userPhotoScrollView;
     
-  IBOutlet UIScrollView * userPhotoScrollView;
-    
-   NSArray * userPhotoUrls;
+    NSArray * userPhotoUrls;
     
     IBOutlet UILabel * nameLabel;
     IBOutlet UILabel * taglineLabel;
@@ -88,8 +88,17 @@
             imagePath = [userPhotoUrls objectAtIndex:i];
      
             UIImageView * tempView = [[UIImageView alloc] initWithFrame:CGRectMake(tempSize.width * i, 0, tempSize.width, tempSize.height)];
-            [tempView setImageURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@", APP_RESOURCE_PATH, imagePath]]];
+            [tempView setContentMode:UIViewContentModeScaleAspectFill];
+            [tempView setClipsToBounds:YES];
             [userPhotoScrollView addSubview:tempView];
+            
+            NSURL * imageUrl = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", APP_RESOURCE_PATH, imagePath]];
+            
+           
+           
+            [tempView setImageWithURL:imageUrl];
+            
+            
         }else{
             [circleImageView setHidden:YES];
         }
@@ -115,14 +124,30 @@
     userPhotoScrollView.contentSize = CGSizeMake(tempSize.width * [userPhotoUrls count], tempSize.height);
     
     
-    nameLabel.text = [NSString stringWithFormat:@"%@,%ld - %@,%@",self.profile.name, self.profile.age, self.profile.city, self.profile.state];
+    NSString * profileTitle = [NSString stringWithFormat:@"%@,%ld",self.profile.name, (long)self.profile.age];
+   
+    if (self.profile.city != nil && ![self.profile.city isEqualToString:@""]) {
+        profileTitle = [NSString stringWithFormat:@"%@ - %@,@",self.profile.city, self.profile.state ];
+    }
+    
+    nameLabel.text = profileTitle;
     taglineLabel.text = self.profile.tageline;
     workLabel.text =  self.profile.workplace;
     homeLabel.text = self.profile.street;
     schoolLbael.text = self.profile.schools;
     religionLabel.text = [FXUser religionFromIndex: self.profile.religion];
     
-    interestLabel.text = self.profile.interest;
+                          
+    NSString * interestStr = [self.profile.interest componentsJoinedByString:@", "];
+    interestLabel.numberOfLines = 0;
+    interestLabel.text = interestStr;
+    CGSize labelSize = [interestStr sizeWithFont:[interestLabel font]
+                       constrainedToSize:CGSizeMake(interestLabel.frame.size.width, self.view.frame.size.height) lineBreakMode:NSLineBreakByWordWrapping];
+    CGRect tempRect = interestLabel.frame;
+    tempRect.size.height = labelSize.height + 5;
+    [interestLabel setFrame:tempRect];
+    
+    [profileScrollView setContentSize:CGSizeMake(self.view.frame.size.width, self.view.frame.size.height + labelSize.height - 10)];
 
 }
 

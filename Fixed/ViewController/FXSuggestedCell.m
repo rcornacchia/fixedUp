@@ -20,10 +20,10 @@
     self.suggestedMatch = match;
     
     if ([match.user1_id isEqual:[FXUser sharedUser].fb_id]) {
-        [self.userPhotoButton setBackgroundImageForState:UIControlStateNormal withURL:[FXUser photoPathFromId:match.user2_id]];
+        [self.userPhotoButton setImageForState:UIControlStateNormal withURL:[FXUser photoPathFromId:match.user2_id] placeholderImage:[UIImage imageNamed:@"anonymous.png"]];
         
     }else{
-        [self.userPhotoButton setBackgroundImageForState:UIControlStateNormal withURL:[FXUser photoPathFromId:match.user1_id]];
+        [self.userPhotoButton setImageForState:UIControlStateNormal withURL:[FXUser photoPathFromId:match.user1_id] placeholderImage:[UIImage imageNamed:@"anonymous.png"]];
         
     }
     

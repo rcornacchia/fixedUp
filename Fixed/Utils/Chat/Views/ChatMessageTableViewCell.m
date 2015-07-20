@@ -34,7 +34,7 @@ static UIImage *aquaBubble;
                        lineBreakMode:NSLineBreakByWordWrapping];
     
 	
-	size.height += 45.0;
+	size.height += 25.0;
 	return size.height;
 
 }
@@ -47,7 +47,7 @@ static UIImage *aquaBubble;
         [self.dateLabel setFrame:CGRectMake(10, 5, 300, 20)];
         [self.dateLabel setFont:[UIFont systemFontOfSize:11.0]];
         [self.dateLabel setTextColor:[UIColor lightGrayColor]];
-        [self.contentView addSubview:self.dateLabel];
+     //   [self.contentView addSubview:self.dateLabel];
         
         self.backgroundImageView = [[UIImageView alloc] init];
         [self.backgroundImageView setFrame:CGRectZero];
@@ -79,11 +79,11 @@ static UIImage *aquaBubble;
     NSString *time = [message.datetime timeAgoSinceNow];
     
     // Left/Right bubble
-    if ([ChatService shared].currentUser.ID == message.senderID) {
-        [self.messageTextView setFrame:CGRectMake(padding, padding+5, size.width, size.height+padding)];
+    if ([ChatService shared].currentUser.ID != message.senderID) {
+        [self.messageTextView setFrame:CGRectMake(padding, 5, size.width, size.height+padding)];
         [self.messageTextView sizeToFit];
         
-        [self.backgroundImageView setFrame:CGRectMake(padding/2, padding+5,
+        [self.backgroundImageView setFrame:CGRectMake(padding/2, 5,
                                                       self.messageTextView.frame.size.width+padding/2, self.messageTextView.frame.size.height+5)];
         self.backgroundImageView.image = orangeBubble;
         
@@ -91,10 +91,10 @@ static UIImage *aquaBubble;
         self.dateLabel.text = [NSString stringWithFormat:@"%@, %@", [[ChatService shared].currentUser login], time];
         
     } else {
-        [self.messageTextView setFrame:CGRectMake(320-size.width-padding/2, padding+5, size.width, size.height+padding)];
+        [self.messageTextView setFrame:CGRectMake(self.frame.size.width-size.width-padding/2, 5, size.width, size.height+padding)];
         [self.messageTextView sizeToFit];
         
-        [self.backgroundImageView setFrame:CGRectMake(320-size.width-padding/2, padding+5,
+        [self.backgroundImageView setFrame:CGRectMake(self.frame.size.width-size.width-padding/2, 5,
                                                       self.messageTextView.frame.size.width+padding/2, self.messageTextView.frame.size.height+5)];
         self.backgroundImageView.image = aquaBubble;
         

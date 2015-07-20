@@ -10,4 +10,5 @@
 
 @interface FXBankVC : UIViewController
 
+@property (nonatomic, assign) double fixedBank;
 @end

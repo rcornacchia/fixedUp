@@ -14,7 +14,7 @@
 #import "FXChatVC.h"
 
 
-@interface FXMyMatchVC ()<UITableViewDataSource, UITableViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, FXSuggestedCellDelegate, UITextFieldDelegate>
+@interface FXMyMatchVC ()<UITableViewDataSource, UITableViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, FXSuggestedCellDelegate, UITextFieldDelegate, MKStoreObserverDelegate>
 {
     IBOutlet UIView *chatView;
     
@@ -61,7 +61,10 @@
     
     NSMutableArray * suggestedMatches;
     NSMutableArray * myMatches;
+ 
+    FXMatch * selectedMatch;
     
+    QBChatDialog *chatDialog;
 }
 @end
 
@@ -70,12 +73,18 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    [self initMyMatchView];
+   
+    [MKStoreManager sharedManager].storeObserver.delegate = self;
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+-(void)viewWillAppear:(BOOL)animated
+{
+     [self initMyMatchView];
 }
 
 -(void)initMyMatchView
@@ -114,7 +123,7 @@
     
     purchaseCoinView.hidden = YES;
     purchaseCoinSubView.layer.borderWidth = 1.5;
-    purchaseCoinSubView.layer.borderColor = FIXED_GREEN_COLOR.CGColor;
+    purchaseCoinSubView.layer.borderColor = FIXED_RED_COLOR.CGColor;
     purchaseCoinSubView.layer.cornerRadius = 10;
     
     UITapGestureRecognizer * gesture = [[UITapGestureRecognizer alloc] init];
@@ -127,6 +136,7 @@
     
     [self refreshCoins];
  
+    
     [self loadData];
 }
 
@@ -220,7 +230,18 @@
 
 -(IBAction)onChat:(id)sender
 {
+    NSString * user_id;
+    if ([selectedMatch.user1_id isEqualToString:[FXUser sharedUser].fb_id]) {
+        user_id = selectedMatch.user2_id;
+    }else{
+        user_id = selectedMatch.user1_id;
+    }
     
+    FXProfile * profile = [FXProfile  getProfile:user_id withView:nil];
+    
+    if (profile != nil ) {
+        [self fetchQBChatDialogWithFriendId:profile.fb_id withQBUserId:profile.QBUserId];
+    }
 }
 
 -(IBAction)onChatBack:(id)sender
@@ -249,6 +270,29 @@
     
 }
 
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    selectedMatch = [myMatches objectAtIndex:indexPath.row];
+    
+    NSString * user_id;
+    if ([selectedMatch.user1_id isEqualToString:[FXUser sharedUser].fb_id]) {
+        user_id = selectedMatch.user2_id;
+    }else{
+        user_id = selectedMatch.user1_id;
+    }
+
+    
+    FXProfile * profile = [FXProfile getProfile:user_id withView:nil];
+    if (profile == nil) {
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+        [[[UIAlertView alloc] initWithTitle:@"" message:@"Connection Failed" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil] show];
+    }else{
+            [self fetchQBChatDialogWithFriendId:profile.fb_id withQBUserId:profile.QBUserId];
+    }
+    
+    
+}
 
 // Collection View
 
@@ -294,6 +338,8 @@
         [acceptView setHidden:NO];
         
         FXMatch * tempMatch =  [suggestedMatches objectAtIndex:index];
+        selectedMatch = tempMatch;
+        
         tempMatch.is_accept = YES;
         [suggestedMatches removeObjectAtIndex:index];
         [myMatches addObject:tempMatch];
@@ -319,13 +365,13 @@
     FXMatch * match = [suggestedMatches objectAtIndex:index];
     
     if ([match.user1_id isEqualToString:[FXUser sharedUser].fb_id]) {
-        [selectedUserPhotoButton setImageForState:UIControlStateNormal withURL:[FXUser photoPathFromId:match.user2_id]];
+        [selectedUserPhotoButton setImageForState:UIControlStateNormal withURL:[FXUser photoPathFromId:match.user2_id] placeholderImage:[UIImage imageNamed:@"anonymous.png"]];
         [nameLabel setText:match.user2_name];
         
         selectedUserId = match.user2_id;
         
     }else{
-        [selectedUserPhotoButton setImageForState:UIControlStateNormal withURL:[FXUser photoPathFromId:match.user1_id]];
+        [selectedUserPhotoButton setImageForState:UIControlStateNormal withURL:[FXUser photoPathFromId:match.user1_id]placeholderImage:[UIImage imageNamed:@"anonymous.png"]];
         [nameLabel setText:match.user1_name];
         selectedUserId = match.user1_id;
 
@@ -334,7 +380,8 @@
     if (match.anonymous) {
         [suggestedFriendPhotoButton setImage:[UIImage imageNamed:@"anonymous.png"] forState:UIControlStateNormal];
     }else{
-        [suggestedFriendPhotoButton setImageForState:UIControlStateNormal withURL:[FXUser photoPathFromId:match.provider_id]];
+        [suggestedFriendPhotoButton setImageForState:UIControlStateNormal withURL:[FXUser photoPathFromId:match.provider_id] placeholderImage:[UIImage imageNamed:@"anonymous.png"]];
+        
     }
     
     suggestedFriendNameLabel.text = [NSString stringWithFormat:@"\"%@\"\n-%@",match.comment, match.provider_name];
@@ -354,18 +401,26 @@
 // Coin Purchase Processing
 
 -(IBAction)onBuy1:(id)sender{
-    [self addCoin:1];
+
+    [[MKStoreManager sharedManager] onBuy1];
+
 }
 
 -(IBAction)onBuy5:(id)sender{
-    [self addCoin:5];
+
+    [[MKStoreManager sharedManager] onBuy5];
+  
 }
 
 -(IBAction)onBuy10:(id)sender{
-    [self addCoin:10];
+    
+    [[MKStoreManager sharedManager] onBuy10];
+  
 }
 
--(void)addCoin:(NSInteger)coinCount{
+// In-App Purchase Delegate
+
+-(void)addPuchasedCoin:(NSInteger)coinCount{
     
     NSString * keyStr = [NSString stringWithFormat:@"%@_addedcoin", [FXUser sharedUser].fb_id];
     [[NSUserDefaults standardUserDefaults] setInteger:coinCount  forKey:keyStr];
@@ -381,6 +436,7 @@
     
 }
 
+
 #pragma mark - Navigation
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -388,12 +444,44 @@
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
     
-    if ([segue.identifier isEqualToString:@"gotoChatView"] || [segue.identifier isEqualToString:@"gotoChatView1"]) {
+    if ([segue.identifier isEqualToString:@"gotoChatView"]) {
         FXChatVC  * controller = segue.destinationViewController;
         
         controller.match =  [myMatches objectAtIndex:[friendTableView indexPathForSelectedRow].row];
+        controller.dialog = chatDialog;
     }
 }
 
+-(void)fetchQBChatDialogWithFriendId:(NSString *)friendId withQBUserId:(NSUInteger)QBUserId{
+    
+    QBChatDialog *tempChatDialog = [QBChatDialog new];
+    
+    NSMutableArray *selectedUsersIDs = [NSMutableArray array];
+    [selectedUsersIDs addObject:@(QBUserId)];
+    
+    tempChatDialog.occupantIDs = selectedUsersIDs;
+    tempChatDialog.type = QBChatDialogTypePrivate;
+  
+    __strong __typeof(self)weakSelf = self;
+    [QBRequest createDialog:tempChatDialog successBlock:^(QBResponse *response, QBChatDialog *createdDialog) {
+        
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+        chatDialog = createdDialog;
+        [ChatService shared].messages = [[NSMutableDictionary alloc] init];
+        
+        [weakSelf performSegueWithIdentifier:@"gotoChatView" sender:nil];
+    } errorBlock:^(QBResponse *response) {
+
+        [MBProgressHUD hideHUDForView:self.view animated:YES];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Errors"
+                                                        message:response.error.error.localizedDescription
+                                                       delegate:nil
+                                              cancelButtonTitle:@"Ok"
+                                              otherButtonTitles: nil];
+        [alert show];
+        
+    }];
+
+}
 
 @end

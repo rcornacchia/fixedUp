@@ -32,11 +32,11 @@ typedef NS_ENUM(NSInteger, SETTING_TYPE)  {
 @property(nonatomic, assign) NSInteger age;
 
 
-    // Location
+// Location
 
 @property(nonatomic, strong) NSString * workplace;
 @property(nonatomic, strong) NSString * schools;
-@property(nonatomic, strong) NSString * interest;
+@property(nonatomic, strong) NSArray * interest;
 @property(nonatomic, strong) NSString * state;
 @property(nonatomic, strong) NSString * city;
 @property(nonatomic, strong) NSString  *street;
@@ -77,6 +77,11 @@ typedef NS_ENUM(NSInteger, SETTING_TYPE)  {
 @property (nonatomic, assign) int activeFixes;
 @property (nonatomic, assign) int coins;
 
+// Chatting
+
+@property(nonatomic, assign) NSInteger QBUserId;
+
+
 @property(nonatomic, strong) NSArray * myFriendList;
 
 @property (nonatomic, strong) NSMutableArray * suggestedFriendList;
@@ -98,6 +103,7 @@ typedef NS_ENUM(NSInteger, SETTING_TYPE)  {
 -(FXProfile *)convertUser2Profile;
 
 -(BOOL)fbSigin:(NSString *)postStr withView:(UIView *)view;
+-(void)submitQBUserId:(NSInteger)userId;
 -(NSMutableArray *)uploadImage:(NSArray *)uploadImages withFlag:(BOOL)flag;
 -(BOOL)saveMatchReference:(NSString * )postStr withView:(UIView *)view;
 -(BOOL)saveUserProfile:(NSString * )postStr withView:(UIView *)view;
@@ -126,5 +132,6 @@ typedef NS_ENUM(NSInteger, SETTING_TYPE)  {
 
 -(BOOL)addCoin:(UIView *)view;
 -(BOOL)withdrawCoin:(UIView *)view;
+
 
 @end

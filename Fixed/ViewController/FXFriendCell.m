@@ -40,12 +40,15 @@
     
     NSURL  * tempPath =  [FXUser photoPathFromId:userProfile.fb_id];
     
+    [userImageButton setImage:[UIImage imageNamed:@"anonymous"] forState:UIControlStateNormal];
+    
     if ( tempPath != nil ) {
-        [userImageButton setBackgroundImageForState:UIControlStateNormal withURL:tempPath];
+        [userImageButton setImageForState:UIControlStateNormal withURL:tempPath];
+        
     }
  
     scoreLabel.text =  [NSString stringWithFormat:@"%i",(int)(userProfile.match_score * 100)];
-    categoryLabel.text = userProfile.interest;
+    categoryLabel.text = [userProfile.interest componentsJoinedByString:@","];
     friendCountLabel.text = [NSString stringWithFormat:@"%i", userProfile.match_tags];
 
 }
