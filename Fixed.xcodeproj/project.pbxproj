@@ -1573,7 +1573,7 @@
 					"$(PROJECT_DIR)/Fixed/SDK/Facebook",
 					"$(PROJECT_DIR)/Fixed/Utils",
 					"$(PROJECT_DIR)/Fixed/SDK/Quickblox",
-					/Users/heliumsoft/Documents/FacebookSDK,
+					/Users/Rob/Documents/FacebookSDK,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Fixed/PrefixHeader.pch;
@@ -1611,7 +1611,7 @@
 					"$(PROJECT_DIR)/Fixed/SDK/Facebook",
 					"$(PROJECT_DIR)/Fixed/Utils",
 					"$(PROJECT_DIR)/Fixed/SDK/Quickblox",
-					/Users/heliumsoft/Documents/FacebookSDK,
+					/Users/Rob/Documents/FacebookSDK,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Fixed/PrefixHeader.pch;
